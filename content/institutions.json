@@ -1,0 +1,36 @@
+{
+  "institutions": [
+    {
+      "id": "itm",
+      "nameRo": "Inspectoratul Teritorial de Muncă",
+      "labelKey": "inst.itm",
+      "perCounty": true,
+      "countyBasis": "employer",
+      "emails": { "*": "<ITM_EMAIL_PLACEHOLDER>" }
+    },
+    {
+      "id": "igi",
+      "nameRo": "Inspectoratul General pentru Imigrări",
+      "labelKey": "inst.igi",
+      "perCounty": true,
+      "countyBasis": "worker",
+      "emails": { "*": "<IGI_EMAIL_PLACEHOLDER>" }
+    },
+    {
+      "id": "cncd",
+      "nameRo": "Consiliul Național pentru Combaterea Discriminării",
+      "labelKey": "inst.cncd",
+      "perCounty": false,
+      "emails": { "*": "<CNCD_EMAIL_PLACEHOLDER>" }
+    },
+    {
+      "id": "foundation",
+      "nameRo": "<FOUNDATION_NAME_PLACEHOLDER>",
+      "labelKey": "inst.foundation",
+      "perCounty": false,
+      "emails": { "*": "<FOUNDATION_EMAIL_PLACEHOLDER>" },
+      "whatsapp": "<FOUNDATION_WHATSAPP_PLACEHOLDER>"
+    }
+  ]
+}
+

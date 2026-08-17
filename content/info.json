@@ -1,0 +1,20 @@
+{
+  "categories": [
+    {
+      "id": "legal_placeholder",
+      "icon": "information-circle-outline",
+      "labelKey": "info.placeholder.category",
+      "items": [
+        {
+          "id": "legal_placeholder_item",
+          "labelKey": "info.placeholder.title",
+          "bodyKey": "info.placeholder.body",
+          "steps": ["info.placeholder.step"],
+          "institutionIds": [],
+          "refs": "<LEGAL_REFERENCE_PLACEHOLDER>"
+        }
+      ]
+    }
+  ]
+}
+

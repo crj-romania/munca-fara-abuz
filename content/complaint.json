@@ -1,0 +1,176 @@
+{
+  "statusQuestions": {
+    "employment": {
+      "labelKey": "complaint.q.employment",
+      "options": ["employed", "contract_ended", "other"]
+    },
+    "residence": {
+      "labelKey": "complaint.q.residence",
+      "options": ["documented", "undocumented", "prefer_not_say"]
+    }
+  },
+  "commonFields": [
+    { "id": "lastName", "type": "text", "required": true, "labelKey": "complaint.f.lastName" },
+    { "id": "firstName", "type": "text", "required": true, "labelKey": "complaint.f.firstName" },
+    { "id": "citizenship", "type": "text", "required": true, "labelKey": "complaint.f.citizenship" },
+    {
+      "id": "idType",
+      "type": "select",
+      "required": true,
+      "labelKey": "complaint.f.idType",
+      "options": [
+        { "value": "passport", "labelKey": "complaint.f.idType.passport" },
+        { "value": "trc", "labelKey": "complaint.f.idType.trc" }
+      ]
+    },
+    { "id": "idNumber", "type": "text", "required": true, "labelKey": "complaint.f.idNumber" },
+    { "id": "cnp", "type": "text", "required": false, "labelKey": "complaint.f.cnp", "hintKey": "complaint.f.cnp.hint" },
+    { "id": "address", "type": "text", "required": true, "labelKey": "complaint.f.address" },
+    { "id": "addressCounty", "type": "county", "required": true, "labelKey": "complaint.f.addressCounty" },
+    { "id": "contact", "type": "text", "required": true, "labelKey": "complaint.f.contact", "hintKey": "complaint.f.contact.hint" }
+  ],
+  "employerFields": [
+    { "id": "employerName", "type": "text", "required": true, "labelKey": "complaint.f.employerName", "hintKey": "complaint.f.employerName.hint" },
+    { "id": "employerCounty", "type": "county", "required": true, "labelKey": "complaint.f.employerCounty" },
+    { "id": "employerAddress", "type": "text", "required": false, "labelKey": "complaint.f.employerAddress" },
+    { "id": "employerRegCom", "type": "text", "required": false, "labelKey": "complaint.f.employerRegCom" },
+    { "id": "employerCui", "type": "text", "required": false, "labelKey": "complaint.f.employerCui" }
+  ],
+  "categories": [
+    {
+      "id": "unpaid_wages",
+      "labelKey": "complaint.cat.unpaid_wages",
+      "requiresEmployer": true,
+      "violations": [
+        { "id": "no_salary", "labelKey": "complaint.v.unpaid.no_salary", "sentenceKey": "complaint.v.unpaid.no_salary.ro" },
+        { "id": "partial_pay", "labelKey": "complaint.v.unpaid.partial_pay", "sentenceKey": "complaint.v.unpaid.partial_pay.ro" },
+        { "id": "no_overtime", "labelKey": "complaint.v.unpaid.no_overtime", "sentenceKey": "complaint.v.unpaid.no_overtime.ro" },
+        { "id": "no_payslip", "labelKey": "complaint.v.unpaid.no_payslip", "sentenceKey": "complaint.v.unpaid.no_payslip.ro" }
+      ],
+      "fields": [
+        { "id": "period", "type": "text", "required": true, "labelKey": "complaint.f.period" },
+        { "id": "amount", "type": "text", "required": false, "labelKey": "complaint.f.amount" },
+        { "id": "freeText", "type": "freetext", "required": false, "labelKey": "complaint.f.freeText" }
+      ],
+      "destinations": { "default": ["itm"], "undocumented": "warning_then_choice" },
+      "templateKey": "complaint.tpl.unpaid_wages"
+    },
+    {
+      "id": "working_time",
+      "labelKey": "complaint.cat.working_time",
+      "requiresEmployer": true,
+      "violations": [
+        { "id": "excessive_hours", "labelKey": "complaint.v.working_time.excessive_hours", "sentenceKey": "complaint.v.working_time.excessive_hours.ro" },
+        { "id": "no_weekly_rest", "labelKey": "complaint.v.working_time.no_weekly_rest", "sentenceKey": "complaint.v.working_time.no_weekly_rest.ro" },
+        { "id": "no_leave", "labelKey": "complaint.v.working_time.no_leave", "sentenceKey": "complaint.v.working_time.no_leave.ro" }
+      ],
+      "fields": [{ "id": "freeText", "type": "freetext", "required": false, "labelKey": "complaint.f.freeText" }],
+      "destinations": { "default": ["itm"], "undocumented": "warning_then_choice" },
+      "templateKey": "complaint.tpl.working_time"
+    },
+    {
+      "id": "documents_withheld",
+      "labelKey": "complaint.cat.documents_withheld",
+      "requiresEmployer": true,
+      "violations": [
+        { "id": "passport_kept", "labelKey": "complaint.v.documents.passport_kept", "sentenceKey": "complaint.v.documents.passport_kept.ro", "emergencyBanner": true },
+        { "id": "permit_kept", "labelKey": "complaint.v.documents.permit_kept", "sentenceKey": "complaint.v.documents.permit_kept.ro" },
+        { "id": "no_contract_copy", "labelKey": "complaint.v.documents.no_contract_copy", "sentenceKey": "complaint.v.documents.no_contract_copy.ro" }
+      ],
+      "fields": [{ "id": "freeText", "type": "freetext", "required": false, "labelKey": "complaint.f.freeText" }],
+      "destinations": { "default": ["itm"], "undocumented": "warning_then_choice" },
+      "templateKey": "complaint.tpl.documents_withheld"
+    },
+    {
+      "id": "housing",
+      "labelKey": "complaint.cat.housing",
+      "requiresEmployer": true,
+      "violations": [
+        { "id": "rent_over_limit", "labelKey": "complaint.v.housing.rent_over_limit", "sentenceKey": "complaint.v.housing.rent_over_limit.ro" },
+        { "id": "rent_no_consent", "labelKey": "complaint.v.housing.rent_no_consent", "sentenceKey": "complaint.v.housing.rent_no_consent.ro" },
+        { "id": "bad_conditions", "labelKey": "complaint.v.housing.bad_conditions", "sentenceKey": "complaint.v.housing.bad_conditions.ro" }
+      ],
+      "fields": [{ "id": "freeText", "type": "freetext", "required": false, "labelKey": "complaint.f.freeText" }],
+      "destinations": { "default": ["itm"], "undocumented": "warning_then_choice" },
+      "templateKey": "complaint.tpl.housing"
+    },
+    {
+      "id": "termination",
+      "labelKey": "complaint.cat.termination",
+      "requiresEmployer": true,
+      "violations": [
+        { "id": "no_docs_on_exit", "labelKey": "complaint.v.termination.no_docs_on_exit", "sentenceKey": "complaint.v.termination.no_docs_on_exit.ro" },
+        { "id": "forced_resignation", "labelKey": "complaint.v.termination.forced_resignation", "sentenceKey": "complaint.v.termination.forced_resignation.ro" },
+        { "id": "final_pay_missing", "labelKey": "complaint.v.termination.final_pay_missing", "sentenceKey": "complaint.v.termination.final_pay_missing.ro" }
+      ],
+      "fields": [{ "id": "freeText", "type": "freetext", "required": false, "labelKey": "complaint.f.freeText" }],
+      "destinations": { "default": ["itm"], "undocumented": "warning_then_choice" },
+      "templateKey": "complaint.tpl.termination"
+    },
+    {
+      "id": "employer_change",
+      "labelKey": "complaint.cat.employer_change",
+      "requiresEmployer": true,
+      "violations": [
+        { "id": "change_blocked", "labelKey": "complaint.v.employer_change.change_blocked", "sentenceKey": "complaint.v.employer_change.change_blocked.ro" },
+        { "id": "threat_status", "labelKey": "complaint.v.employer_change.threat_status", "sentenceKey": "complaint.v.employer_change.threat_status.ro" }
+      ],
+      "fields": [{ "id": "freeText", "type": "freetext", "required": false, "labelKey": "complaint.f.freeText" }],
+      "destinations": { "default": ["igi"], "undocumented": "warning_then_choice" },
+      "templateKey": "complaint.tpl.employer_change"
+    },
+    {
+      "id": "health_safety",
+      "labelKey": "complaint.cat.health_safety",
+      "requiresEmployer": true,
+      "violations": [
+        { "id": "no_equipment", "labelKey": "complaint.v.health.no_equipment", "sentenceKey": "complaint.v.health.no_equipment.ro" },
+        { "id": "no_training", "labelKey": "complaint.v.health.no_training", "sentenceKey": "complaint.v.health.no_training.ro" },
+        { "id": "accident_hidden", "labelKey": "complaint.v.health.accident_hidden", "sentenceKey": "complaint.v.health.accident_hidden.ro" }
+      ],
+      "fields": [{ "id": "freeText", "type": "freetext", "required": false, "labelKey": "complaint.f.freeText" }],
+      "destinations": { "default": ["itm"], "undocumented": "warning_then_choice" },
+      "templateKey": "complaint.tpl.health_safety"
+    },
+    {
+      "id": "discrimination",
+      "labelKey": "complaint.cat.discrimination",
+      "requiresEmployer": true,
+      "violations": [
+        { "id": "worse_conditions", "labelKey": "complaint.v.discrimination.worse_conditions", "sentenceKey": "complaint.v.discrimination.worse_conditions.ro" },
+        { "id": "harassment", "labelKey": "complaint.v.discrimination.harassment", "sentenceKey": "complaint.v.discrimination.harassment.ro" }
+      ],
+      "fields": [{ "id": "freeText", "type": "freetext", "required": false, "labelKey": "complaint.f.freeText" }],
+      "destinations": { "default": ["cncd"], "undocumented": "warning_then_choice" },
+      "templateKey": "complaint.tpl.discrimination"
+    },
+    {
+      "id": "agency",
+      "labelKey": "complaint.cat.agency",
+      "requiresEmployer": false,
+      "violations": [
+        { "id": "illegal_fees", "labelKey": "complaint.v.agency.illegal_fees", "sentenceKey": "complaint.v.agency.illegal_fees.ro" },
+        { "id": "different_conditions", "labelKey": "complaint.v.agency.different_conditions", "sentenceKey": "complaint.v.agency.different_conditions.ro" },
+        { "id": "return_cost_refused", "labelKey": "complaint.v.agency.return_cost_refused", "sentenceKey": "complaint.v.agency.return_cost_refused.ro" }
+      ],
+      "fields": [
+        { "id": "agencyName", "type": "text", "required": true, "labelKey": "complaint.f.agencyName" },
+        { "id": "agencyCounty", "type": "county", "required": true, "labelKey": "complaint.f.agencyCounty" },
+        { "id": "agencyCui", "type": "text", "required": false, "labelKey": "complaint.f.agencyCui" },
+        { "id": "freeText", "type": "freetext", "required": false, "labelKey": "complaint.f.freeText" }
+      ],
+      "destinations": { "default": ["itm"], "undocumented": "warning_then_choice" },
+      "templateKey": "complaint.tpl.agency"
+    },
+    {
+      "id": "other",
+      "labelKey": "complaint.cat.other",
+      "requiresEmployer": false,
+      "violations": [],
+      "fields": [{ "id": "freeText", "type": "freetext", "required": true, "labelKey": "complaint.f.freeText" }],
+      "destinations": { "default": ["foundation"] },
+      "templateKey": "complaint.tpl.other"
+    }
+  ]
+}
+

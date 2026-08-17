@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "contentVersion": "2026-08-05.1",
+  "legalUpdatedAt": "2026-08-05",
+  "languages": [
+    { "code": "en", "name": "English", "rtl": false, "mt": "mlkit:en" },
+    { "code": "ro", "name": "Română", "rtl": false, "mt": "mlkit:ro" },
+    { "code": "ne", "name": "नेपाली", "rtl": false, "mt": "none" },
+    { "code": "ur", "name": "اردو", "rtl": true, "mt": "mlkit:ur" }
+  ],
+  "files": {
+    "info": "info.json",
+    "complaint": "complaint.json",
+    "institutions": "institutions.json",
+    "emergency": "emergency.json"
+  }
+}
+

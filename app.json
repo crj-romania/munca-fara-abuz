@@ -1,0 +1,25 @@
+{
+  "expo": {
+    "name": "Muncă Fără Abuz",
+    "slug": "munca-fara-abuz",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "scheme": "muncafaraabuz",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "ro.crj.muncafaraabuz"
+    },
+    "android": {
+      "package": "ro.crj.muncafaraabuz"
+    },
+    "web": {
+      "bundler": "metro"
+    },
+    "plugins": ["expo-router"],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
