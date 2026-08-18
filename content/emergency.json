@@ -1,6 +1,22 @@
 {
   "titleKey": "emergency.title",
-  "bodyKey": "emergency.placeholder",
-  "contacts": []
+  "bodyKey": "emergency.body.placeholder",
+  "contacts": [
+    {
+      "id": "112",
+      "labelKey": "emergency.contact.112.label",
+      "descriptionKey": "emergency.contact.112.description",
+      "value": "112",
+      "action": "call",
+      "primary": true
+    },
+    {
+      "id": "anitp",
+      "labelKey": "emergency.contact.anitp.label",
+      "descriptionKey": "emergency.contact.anitp.description",
+      "value": "0800 800 678",
+      "action": "call",
+      "primary": false
+    }
+  ]
 }
-

@@ -64,7 +64,12 @@ const sourceFiles = [
   'app/language.tsx',
   'app/home.tsx',
   'app/settings.tsx',
+  'app/emergency.tsx',
+  'app/contact.tsx',
+  'app/info/index.tsx',
+  'app/info/[...path].tsx',
   'src/components/LanguageGrid.tsx',
+  'src/components/ContactPrompt.tsx',
 ];
 for (const relativePath of sourceFiles) {
   const source = await readFile(path.join(projectRoot, relativePath), 'utf8');
@@ -116,4 +121,3 @@ assert(urdu?.rtl === true, 'Urdu must enable RTL.');
 
 console.log(`Content OK: ${index.languages.length} dynamic languages, ${englishKeys.length} complete keys.`);
 console.log('Acceptance contract OK: index-driven grid, recursive JSON discovery, no hardcoded test languages.');
-

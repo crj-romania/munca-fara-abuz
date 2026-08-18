@@ -1,7 +1,8 @@
-# Muncă Fără Abuz — Faza 1
+# Muncă Fără Abuz — Faza 2
 
-Aplicație Expo (React Native + TypeScript). Această livrare conține exclusiv
-Faza 1 din SPEC §9: scheletul, motorul de conținut și ecranele S1, S2 și S13.
+Aplicație Expo (React Native + TypeScript). Livrarea curentă conține Faza 1 și
+Faza 2 din SPEC §9: motorul de conținut, S1–S6, S12 minim și S13. Fluxul de
+plângere rămâne pentru fazele următoare.
 
 ## Cerințe
 
@@ -15,7 +16,7 @@ Faza 1 din SPEC §9: scheletul, motorul de conținut și ecranele S1, S2 și S13
 Deschide PowerShell și execută, pe rând:
 
 ```powershell
-Set-Location -LiteralPath 'G:\CRJ\Aplicatie - COD'
+Set-Location -LiteralPath 'G:\CRJ\Aplicatie'
 npm install
 npm run check:phase1
 npx expo start
@@ -37,6 +38,35 @@ Comanda următoare verifică TypeScript și integritatea conținutului:
 ```powershell
 npm run check:phase1
 ```
+
+Pentru Faza 2:
+
+```powershell
+npm run check:phase2
+```
+
+## Conținut remote prin GitHub Pages
+
+Aplicația folosește întotdeauna conținutul împachetat ca fallback. Pentru
+actualizări fără release, setează în `.env`:
+
+```text
+EXPO_PUBLIC_CONTENT_BASE_URL=https://vadim-chiriac.github.io/migratie
+```
+
+Poți copia `.env.example`. Workflow-ul
+`.github/workflows/deploy-content-pages.yml` publică folderul `content/` la
+fiecare modificare pe `main`. În repository-ul GitHub trebuie selectat o singură
+dată **Settings → Pages → Source: GitHub Actions**.
+
+Pentru o actualizare de conținut:
+
+1. modifică JSON-urile și dicționarele;
+2. mărește `contentVersion` din `content/index.json`;
+3. rulează `npm run check:phase2` și publică schimbarea pe `main`.
+
+Aplicația descarcă întregul set într-un staging cache și îl activează numai
+dacă toate fișierele sunt valide.
 
 Pentru verificarea compatibilității Expo și a bundle-ului Android:
 
@@ -70,11 +100,13 @@ fac în repo-ul de conținut și se mărește `contentVersion`; această livrare
 
 Reload-ul de direcție este apelat numai de selectorul folosit în S1 și S13.
 
-## Limitele acestei faze
+## Limitele livrării curente
 
-- Acțiunile Home pentru informații, urgență, plângere și documente sunt doar
-  elemente de schelet și rămân inactive până la fazele lor.
+- Acțiunile Home pentru informații și urgență sunt active. Plângerea și
+  documentele rămân inactive până la fazele lor.
 - Textele juridice și contactele sunt placeholder-e.
+- Numerele 112 și TelVerde ANITP sunt singurele contacte de urgență reale din
+  conținutul curent; restul contactelor rămân placeholder-e.
 - `complaint.json` conține exclusiv datele DRAFT de test; nu există încă flux
   de formular, PDF, email, traducere sau analytics.
 
@@ -140,4 +172,3 @@ tsconfig.json
 ```
 
 `node_modules/`, `.expo/` și `dist/` sunt generate și nu fac parte din sursă.
-

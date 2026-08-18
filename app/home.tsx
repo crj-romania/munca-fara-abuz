@@ -16,9 +16,22 @@ export default function HomeScreen() {
   return (
     <AppScreen>
       <AppText variant="title">{t('home.title')}</AppText>
-      <HomeAction icon="book-outline" label={t('home.info')} />
-      <HomeAction icon="document-text-outline" label={t('home.problem')} />
-      <HomeAction danger icon="warning-outline" label={t('home.emergency')} />
+      <HomeAction
+        icon="book-outline"
+        label={t('home.info')}
+        onPress={() => router.push('/info')}
+      />
+      <HomeAction
+        disabled
+        icon="document-text-outline"
+        label={t('home.problem')}
+      />
+      <HomeAction
+        danger
+        icon="warning-outline"
+        label={t('home.emergency')}
+        onPress={() => router.push('/emergency')}
+      />
 
       <AppButton
         icon="settings-outline"
@@ -44,4 +57,3 @@ export default function HomeScreen() {
     </AppScreen>
   );
 }
-

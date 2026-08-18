@@ -1,20 +1,48 @@
 {
   "categories": [
     {
-      "id": "legal_placeholder",
+      "id": "work_placeholder",
       "icon": "information-circle-outline",
-      "labelKey": "info.placeholder.category",
+      "labelKey": "info.placeholder.category.work",
       "items": [
         {
-          "id": "legal_placeholder_item",
-          "labelKey": "info.placeholder.title",
-          "bodyKey": "info.placeholder.body",
-          "steps": ["info.placeholder.step"],
-          "institutionIds": [],
-          "refs": "<LEGAL_REFERENCE_PLACEHOLDER>"
+          "id": "pay_placeholder_group",
+          "labelKey": "info.placeholder.group.pay",
+          "items": [
+            {
+              "id": "pay_placeholder",
+              "labelKey": "info.placeholder.title.pay",
+              "bodyKey": "info.placeholder.body.pay.unvalidated",
+              "steps": ["info.placeholder.step.pay.unvalidated"],
+              "institutionIds": ["itm"],
+              "refs": "<LEGAL_REFERENCE_PLACEHOLDER_UNVALIDATED>"
+            }
+          ]
+        },
+        {
+          "id": "documents_placeholder",
+          "labelKey": "info.placeholder.title.documents",
+          "bodyKey": "info.placeholder.body.documents.unvalidated",
+          "steps": ["info.placeholder.step.documents.unvalidated"],
+          "institutionIds": ["itm"],
+          "refs": "<LEGAL_REFERENCE_PLACEHOLDER_UNVALIDATED>"
+        }
+      ]
+    },
+    {
+      "id": "residence_placeholder",
+      "icon": "document-text-outline",
+      "labelKey": "info.placeholder.category.residence",
+      "items": [
+        {
+          "id": "residence_placeholder_item",
+          "labelKey": "info.placeholder.title.residence",
+          "bodyKey": "info.placeholder.body.residence.unvalidated",
+          "steps": ["info.placeholder.step.residence.unvalidated"],
+          "institutionIds": ["igi"],
+          "refs": "<LEGAL_REFERENCE_PLACEHOLDER_UNVALIDATED>"
         }
       ]
     }
   ]
 }
-

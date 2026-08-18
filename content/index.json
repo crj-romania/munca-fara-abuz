@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "contentVersion": "2026-08-05.1",
+  "contentVersion": "2026-08-18.1",
   "legalUpdatedAt": "2026-08-05",
   "languages": [
     { "code": "en", "name": "English", "rtl": false, "mt": "mlkit:en" },
@@ -15,4 +15,3 @@
     "emergency": "emergency.json"
   }
 }
-

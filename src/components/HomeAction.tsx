@@ -11,9 +11,17 @@ type HomeActionProps = {
   label: string;
   icon: ComponentProps<typeof Ionicons>['name'];
   danger?: boolean;
+  disabled?: boolean;
+  onPress?: () => void;
 };
 
-export function HomeAction({ label, icon, danger = false }: HomeActionProps) {
+export function HomeAction({
+  label,
+  icon,
+  danger = false,
+  disabled = false,
+  onPress,
+}: HomeActionProps) {
   const { currentLanguage } = useContent();
   const foreground = danger ? colors.danger : colors.primary;
 
@@ -21,9 +29,15 @@ export function HomeAction({ label, icon, danger = false }: HomeActionProps) {
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={label}
-      accessibilityState={{ disabled: true }}
-      disabled
-      style={[styles.card, danger && styles.dangerCard]}
+      accessibilityState={{ disabled }}
+      disabled={disabled}
+      onPress={onPress}
+      style={({ pressed }) => [
+        styles.card,
+        danger && styles.dangerCard,
+        pressed && !disabled && styles.pressed,
+        disabled && styles.disabled,
+      ]}
     >
       <View
         style={[
@@ -54,9 +68,14 @@ const styles = StyleSheet.create({
     borderColor: colors.danger,
     backgroundColor: colors.dangerSurface,
   },
+  pressed: {
+    opacity: 0.78,
+  },
+  disabled: {
+    opacity: 0.62,
+  },
   content: {
     alignItems: 'center',
     gap: spacing.md,
   },
 });
-
