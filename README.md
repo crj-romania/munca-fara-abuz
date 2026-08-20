@@ -75,6 +75,21 @@ npx expo install --check
 npx expo export --platform android --output-dir dist
 ```
 
+## APK de test fără server local
+
+Profilul EAS `preview` produce un APK instalabil care rulează fără Expo Go și
+fără serverul Metro de pe calculator:
+
+```powershell
+npx eas-cli@latest login
+npx eas-cli@latest build --platform android --profile preview
+```
+
+După finalizarea buildului, deschide pe telefon linkul sau codul QR afișat de
+EAS și instalează APK-ul. Android poate cere permisiunea de instalare din sursa
+folosită pentru descărcare. Buildul include conținutul local și încearcă în plus
+să preia versiuni mai noi de la GitHub Pages.
+
 ## Criteriul limbii dinamice
 
 Lista din S1 și S13 este citită din `content/index.json`. Fișierele
