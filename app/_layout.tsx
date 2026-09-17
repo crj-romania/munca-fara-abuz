@@ -17,6 +17,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { ComplaintProvider } from '@/src/complaint/ComplaintProvider';
 import { ContentProvider } from '@/src/content/ContentProvider';
 import { colors } from '@/src/theme/colors';
 import { fontFamilyForText } from '@/src/theme/fonts';
@@ -76,8 +77,10 @@ export default function RootLayout() {
 
   return (
     <ContentProvider>
-      <StatusBar style="dark" />
-      <Navigation />
+      <ComplaintProvider>
+        <StatusBar style="dark" />
+        <Navigation />
+      </ComplaintProvider>
     </ContentProvider>
   );
 }

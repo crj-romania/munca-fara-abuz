@@ -39,19 +39,9 @@ Angajator: da. Destinatar draft: **ITM** — ⚠ de validat (posibil indicator d
 | permit_kept | My permit/ID is kept from me | Îmi este reținut permisul de ședere sau alt document de identitate. |
 | no_contract_copy | I never got my contract | Nu mi s-a înmânat un exemplar al contractului individual de muncă. |
 
-## 4. `housing` — Problems with housing from my employer
+## 4. `termination` — My contract ended badly
 
-Angajator: da. Destinatar draft: **ITM** — ⚠ de validat.
-
-| id | EN draft | RO draft |
-|---|---|---|
-| rent_over_limit | Rent taken is too high | Suma reținută pentru cazare depășește 25% din remunerația mea netă, contrar legii. |
-| rent_no_consent | Money taken without my agreement | Mi se rețin din salariu sume pentru cazare fără acordul meu scris. |
-| bad_conditions | Housing is not decent | Cazarea pusă la dispoziție nu îndeplinește condiții decente de locuit. |
-
-## 5. `termination` — My contract ended badly
-
-Angajator: da. Destinatar draft: **ITM**; card info asociat despre perioada legală de ședere după încetare (IGI).
+Angajator: da. Destinatar draft: **ITM**.
 
 | id | EN draft | RO draft |
 |---|---|---|
@@ -59,35 +49,7 @@ Angajator: da. Destinatar draft: **ITM**; card info asociat despre perioada lega
 | forced_resignation | I was pushed to resign | Am fost presat să semnez o cerere de demisie împotriva voinței mele. |
 | final_pay_missing | I was not paid what was owed | La încetarea contractului nu mi-au fost plătite drepturile salariale restante. |
 
-## 6. `employer_change` — I cannot change my employer
-
-Angajator: da. Destinatar draft: **IGI** (județ lucrător) — ⚠ de validat.
-
-| id | EN draft | RO draft |
-|---|---|---|
-| change_blocked | My employer blocks my transfer | Angajatorul refuză să îmi permită schimbarea angajatorului, deși legea îmi dă acest drept. |
-| threat_status | I am threatened about my permit | Sunt amenințat că îmi va fi anulat dreptul de ședere dacă îmi schimb angajatorul. |
-
-## 7. `health_safety` — My work is dangerous
-
-Angajator: da. Destinatar draft: **ITM**.
-
-| id | EN draft | RO draft |
-|---|---|---|
-| no_equipment | I got no protective equipment | Nu mi s-a asigurat echipamentul individual de protecție necesar. |
-| no_training | I got no safety training | Nu am primit instruirea de securitate și sănătate în muncă. |
-| accident_hidden | My work accident was hidden | Am suferit un accident de muncă ce nu a fost înregistrat sau raportat de angajator. |
-
-## 8. `discrimination` — I am treated worse than others
-
-Angajator: da. Destinatar draft: **CNCD** (național, `perCounty: false`) — ⚠ de validat dacă mergem și paralel la ITM.
-
-| id | EN draft | RO draft |
-|---|---|---|
-| worse_conditions | I get worse pay/conditions | Sunt tratat mai puțin favorabil decât alți lucrători în privința salariului sau condițiilor de muncă, din cauza originii mele. |
-| harassment | I am harassed at work | Sunt supus unui comportament ostil și degradant repetat la locul de muncă. |
-
-## 9. `agency` — Problems with my recruitment agency
+## 5. `agency` — Problems with my recruitment agency
 
 Angajator: nu (câmpuri agenție: denumire req, județ req, CUI opt). Destinatar draft: **ITM** — ⚠ de validat (posibil ANOFM/AJOFM).
 
@@ -97,7 +59,7 @@ Angajator: nu (câmpuri agenție: denumire req, județ req, CUI opt). Destinatar
 | different_conditions | The real job is not what was promised | Condițiile reale de muncă diferă esențial de oferta pe baza căreia am acceptat contractul. |
 | return_cost_refused | The agency refuses return costs | Agenția refuză să suporte costurile de întoarcere, deși legea o obligă. |
 
-## 10. `other` — Something else
+## 6. `other` — Something else
 
 Angajator: opțional. **Text liber obligatoriu** (nu există încălcări predefinite). Destinatar draft: sugestie de contact cu fundația pentru orientare + opțiune de trimitere generică — ⚠ de definit.
 
@@ -105,4 +67,4 @@ Angajator: opțional. **Text liber obligatoriu** (nu există încălcări predef
 
 **NU sunt categorii de plângere** (rutare directă la ecranul Urgență, nu formular): violență fizică, sechestrare, amenințări grave, trafic de persoane, pericol imediat.
 
-**De validat juridic la finalizare:** toate propozițiile RO, rutarea fiecărei categorii, dublarea ITM/CNCD la discriminare, competența la cazare și agenții, formulările „PC" pentru statutul de ședere.
+**De validat juridic la finalizare:** toate propozițiile RO, rutarea fiecărei categorii și competența pentru agenții.

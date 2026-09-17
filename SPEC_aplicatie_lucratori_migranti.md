@@ -361,3 +361,50 @@ Livrează în această ordine; fiecare fază compilează și rulează:
 - Nu stochează datele formularului după generare.
 - Nu folosește API-uri plătite de traducere și niciun serviciu care cere cheie secretă în aplicație.
 - Nu conține conținut juridic inventat de implementator — tot conținutul vine prin chei din JSON, redactat de echipa juridică.
+
+---
+
+## 11. Actualizare de implementare — 2026-09-08
+
+Această secțiune consemnează deciziile ulterioare brief-ului și are prioritate
+față de descrierile anterioare incompatibile:
+
+- Formularul este organizat în date personale → muncă → problemă (fapte și
+  persoane). Nu se cere statutul documentelor/șederii și nu se întreabă dacă
+  lucrătorul a semnat un contract. Se întreabă dacă a primit copia contractului.
+- Textul liber este disponibil la toate categoriile, opțional alături de o
+  faptă predefinită și obligatoriu dacă nu există nicio faptă selectată. Limita
+  originalului este 1.000 de caractere; limba textului poate fi aleasă separat.
+- Orice text suplimentar într-o altă limbă necesită traducere în română înainte
+  de generare. Editarea originalului sau a limbii invalidează traducerea.
+  Traducerea intră în corp, marcată ca automată, iar originalul exact în anexă.
+  Textul introdus direct în română nu este etichetat drept traducere.
+- Pentru confidențialitate, fluxul Google Translate NU precompletează textul
+  în URL (§6.3 este înlocuit în această privință). Utilizatorul copiază textul,
+  îl lipește explicit pe site după avertizare și aduce traducerea înapoi.
+  Nu se citește clipboardul automat și nu se folosește un API/proxy plătit.
+- ML Kit este un modul Expo local, încărcat opțional: Expo Go și web folosesc
+  fluxul manual. Modelele native se descarcă la cererea de traducere, pe Wi-Fi;
+  modelul-sursă vechi se șterge la schimbarea limbii, iar ținta română se păstrează.
+  Un build nou și teste pe dispozitiv sunt necesare pentru validarea funcțiilor native.
+- Atașamentele sunt opționale: cel mult 5 PDF/JPEG/PNG/WEBP, maximum 10 MiB
+  fiecare și 15 MiB total înainte de PDF. Se fac copii locale, fără modificarea
+  originalelor, OCR sau traducerea fișierelor. Copiile de formular sunt temporare;
+  la generare se persistă copiile aferente PDF-ului, până la ștergerea sa.
+- Emailul include PDF-ul și toate anexele-fișier. Fișierele se verifică înainte
+  de deschiderea emailului. Exportarea PDF-ului singur NU exportă anexele;
+  fiecare anexă se poate salva/distribui separat, inclusiv din Documentele mele.
+- Datele formularului și traducerile nu sunt persistate separat de PDF. Copiile
+  documentelor conțin date personale și rămân locale. Backupul Android al
+  aplicației este dezactivat în buildurile noi; fișierele exportate sunt în afara
+  controlului aplicației. Politica finală de confidențialitate trebuie să descrie
+  distinct traducerea externă, emailul și stocarea documentelor.
+- Modelele juridice DRAFT blochează în continuare trimiterea pe email. Categoria
+  Altele se poate genera fără autoritate configurată; nu se trimite fundației
+  și nu se ghicește destinatarul.
+
+Stadiu: logica este implementată și are teste automate. APK-ul Android Faza 4,
+build 2, a fost compilat în EAS la 2026-09-08 (ora României), inclusiv modulul
+Kotlin ML Kit. Compilarea Swift/iOS nu a fost efectuată. Descărcarea/offline
+ML Kit, fișierele și emailul trebuie în continuare verificate pe telefon.
+Faza 5 (Aptabase și verificările finale) nu este inclusă în această etapă.

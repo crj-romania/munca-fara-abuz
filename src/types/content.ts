@@ -77,6 +77,84 @@ export type InstitutionsContent = {
   institutions: Institution[];
 };
 
+export type ComplaintFieldType =
+  | 'text'
+  | 'date'
+  | 'monthYear'
+  | 'select'
+  | 'county'
+  | 'freetext';
+
+export type ComplaintFieldOption = {
+  value: string;
+  labelKey: string;
+};
+
+export type ComplaintField = {
+  id: string;
+  type: ComplaintFieldType;
+  required: boolean;
+  labelKey: string;
+  hintKey?: string;
+  options?: ComplaintFieldOption[];
+  visibleWhen?: {
+    field: string;
+    values: string[];
+  };
+  requiredWhen?: {
+    field: string;
+    values: string[];
+  };
+  visibleWhenViolationIds?: string[];
+  requiredWhenViolationIds?: string[];
+  requiredAnyOf?: string[];
+  validation?: 'email' | 'phone' | 'cnp';
+  allowUnknown?: boolean;
+  notBeforeField?: string;
+  notFuture?: boolean;
+};
+
+export type ComplaintViolation = {
+  id: string;
+  labelKey: string;
+  sentenceKey: string;
+  emergencyBanner?: boolean;
+};
+
+export type ComplaintStatusQuestion = {
+  labelKey: string;
+  options: string[];
+};
+
+export type ComplaintCategory = {
+  id: string;
+  labelKey: string;
+  requiresEmployer: boolean;
+  suggestedPartyIds: string[];
+  violations: ComplaintViolation[];
+  fields: ComplaintField[];
+  destinations: {
+    default: string[];
+  };
+  routingCountyFields?: Record<string, string>;
+  templateKey: string;
+};
+
+export type ComplaintContent = {
+  statusQuestions: {
+    employment: ComplaintStatusQuestion;
+  };
+  commonFields: ComplaintField[];
+  workFields: ComplaintField[];
+  employerFields: ComplaintField[];
+  partyTypes: {
+    id: string;
+    labelKey: string;
+    fields: ComplaintField[];
+  }[];
+  categories: ComplaintCategory[];
+};
+
 export type ContentBundle = {
   index: ContentIndex;
   strings: Record<string, StringDictionary>;

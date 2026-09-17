@@ -36,7 +36,7 @@ function collectReferencedKeys(value, keys = new Set()) {
 }
 
 const index = await readJson('index.json');
-assert(index.schemaVersion === 1, 'schemaVersion must be 1.');
+assert(index.schemaVersion === 2, 'schemaVersion must be 2.');
 assert(index.languages.some(({ code }) => code === 'en'), 'English fallback is missing.');
 assert(new Set(index.languages.map(({ code }) => code)).size === index.languages.length, 'Language codes must be unique.');
 
@@ -71,9 +71,36 @@ const sourceFiles = [
   'src/components/LanguageGrid.tsx',
   'src/components/ContactPrompt.tsx',
 ];
-for (const relativePath of sourceFiles) {
+const phase3SourceFiles = [
+  'app/documents.tsx',
+  'app/complaint/index.tsx',
+  'app/complaint/status.tsx',
+  'app/complaint/violations.tsx',
+  'app/complaint/identity.tsx',
+  'app/complaint/employer.tsx',
+  'app/complaint/details.tsx',
+  'app/complaint/text.tsx',
+  'app/complaint/attachments.tsx',
+  'app/complaint/preview.tsx',
+  'app/complaint/review.tsx',
+  'app/complaint/complete.tsx',
+  'src/components/ChoiceCard.tsx',
+  'src/components/ComplaintFieldInput.tsx',
+  'src/components/ComplaintFieldsStep.tsx',
+  'src/components/MonthYearInput.tsx',
+  'src/components/AttachmentList.tsx',
+  'src/complaint/pdf.ts',
+  'src/complaint/freeText.ts',
+  'src/complaint/attachments.ts',
+];
+
+for (const relativePath of [...sourceFiles, ...phase3SourceFiles]) {
   const source = await readFile(path.join(projectRoot, relativePath), 'utf8');
   for (const match of source.matchAll(/(?:\bt|\bgetFixedT\([^)]*\))\(\s*['"]([^'"]+)['"]/g)) {
+    referencedKeys.add(match[1]);
+  }
+  // Include validation/error keys passed indirectly to t(), and PDF dictionary keys.
+  for (const match of source.matchAll(/['"]((?:complaint|attachment)\.[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*)['"]/g)) {
     referencedKeys.add(match[1]);
   }
 }

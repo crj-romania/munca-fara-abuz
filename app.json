@@ -12,13 +12,24 @@
       "bundleIdentifier": "ro.crj.muncafaraabuz"
     },
     "android": {
-      "package": "ro.crj.muncafaraabuz"
+      "package": "ro.crj.muncafaraabuz",
+      "allowBackup": false
     },
     "web": {
       "bundler": "metro"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      "expo-mail-composer",
+      "expo-asset",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "deploymentTarget": "15.5"
+          }
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

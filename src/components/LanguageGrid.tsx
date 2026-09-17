@@ -26,13 +26,17 @@ export function LanguageGrid({ onApplied }: LanguageGridProps) {
 
   async function handleLanguagePress(languageCode: string) {
     setApplyingCode(languageCode);
-    await i18n.changeLanguage(languageCode);
-    await waitForIndicator();
-    const reloading = await applyLanguage(languageCode);
-
-    if (!reloading) {
+    try {
+      await i18n.changeLanguage(languageCode);
+      await waitForIndicator();
+      const reloading = await applyLanguage(languageCode);
+      if (!reloading) {
+        onApplied?.();
+      }
+    } catch {
+      // Keep language selection usable if persistence or native reload fails.
+    } finally {
       setApplyingCode(null);
-      onApplied?.();
     }
   }
 

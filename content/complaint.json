@@ -2,16 +2,30 @@
   "statusQuestions": {
     "employment": {
       "labelKey": "complaint.q.employment",
-      "options": ["employed", "contract_ended", "other"]
-    },
-    "residence": {
-      "labelKey": "complaint.q.residence",
-      "options": ["documented", "undocumented", "prefer_not_say"]
+      "options": ["working", "stopped", "not_started"]
+
     }
   },
   "commonFields": [
-    { "id": "lastName", "type": "text", "required": true, "labelKey": "complaint.f.lastName" },
-    { "id": "firstName", "type": "text", "required": true, "labelKey": "complaint.f.firstName" },
+    { "id": "lastName", "type": "text", "required": true, "labelKey": "complaint.f.lastName", "hintKey": "complaint.f.lastName.hint" },
+    {
+      "id": "singleName",
+      "type": "select",
+      "required": true,
+      "labelKey": "complaint.f.singleName",
+      "options": [
+        { "value": "yes", "labelKey": "complaint.f.singleName.yes" },
+        { "value": "no", "labelKey": "complaint.f.singleName.no" }
+      ]
+    },
+    {
+      "id": "firstName",
+      "type": "text",
+      "required": false,
+      "labelKey": "complaint.f.firstName",
+      "visibleWhen": { "field": "singleName", "values": ["no"] },
+      "requiredWhen": { "field": "singleName", "values": ["no"] }
+    },
     { "id": "citizenship", "type": "text", "required": true, "labelKey": "complaint.f.citizenship" },
     {
       "id": "idType",
@@ -24,10 +38,117 @@
       ]
     },
     { "id": "idNumber", "type": "text", "required": true, "labelKey": "complaint.f.idNumber" },
-    { "id": "cnp", "type": "text", "required": false, "labelKey": "complaint.f.cnp", "hintKey": "complaint.f.cnp.hint" },
+    {
+      "id": "cnp",
+      "type": "text",
+      "required": false,
+      "labelKey": "complaint.f.cnp",
+      "hintKey": "complaint.f.cnp.hint",
+      "requiredWhen": { "field": "idType", "values": ["trc"] },
+      "validation": "cnp"
+    },
     { "id": "address", "type": "text", "required": true, "labelKey": "complaint.f.address" },
     { "id": "addressCounty", "type": "county", "required": true, "labelKey": "complaint.f.addressCounty" },
-    { "id": "contact", "type": "text", "required": true, "labelKey": "complaint.f.contact", "hintKey": "complaint.f.contact.hint" }
+    {
+      "id": "phone",
+      "type": "text",
+      "required": false,
+      "labelKey": "complaint.f.phone",
+      "hintKey": "complaint.f.contact.hint",
+      "requiredAnyOf": ["phone", "email"],
+      "validation": "phone"
+    },
+    {
+      "id": "email",
+      "type": "text",
+      "required": false,
+      "labelKey": "complaint.f.email",
+      "hintKey": "complaint.f.contact.hint",
+      "requiredAnyOf": ["phone", "email"],
+      "validation": "email"
+    }
+  ],
+  "workFields": [
+    {
+      "id": "employmentStatus",
+      "type": "select",
+      "required": true,
+      "labelKey": "complaint.f.employmentStatus",
+      "options": [
+        { "value": "working", "labelKey": "complaint.f.employmentStatus.working" },
+        { "value": "stopped", "labelKey": "complaint.f.employmentStatus.stopped" },
+        { "value": "not_started", "labelKey": "complaint.f.employmentStatus.not_started" }
+      ]
+    },
+    { "id": "occupation", "type": "text", "required": true, "labelKey": "complaint.f.occupation", "hintKey": "complaint.f.occupation.hint" },
+    {
+      "id": "workStart",
+      "type": "monthYear",
+      "required": true,
+      "labelKey": "complaint.f.workStart",
+      "visibleWhen": { "field": "employmentStatus", "values": ["working", "stopped"] },
+      "notFuture": true
+    },
+    {
+      "id": "workStartAccuracy",
+      "type": "select",
+      "required": false,
+      "labelKey": "complaint.f.workStartAccuracy",
+      "options": [
+        { "value": "exact", "labelKey": "complaint.date.exact" },
+        { "value": "approximate", "labelKey": "complaint.date.approximate" }
+      ],
+      "visibleWhen": { "field": "employmentStatus", "values": ["working", "stopped"] }
+    },
+    {
+      "id": "workEnd",
+      "type": "monthYear",
+      "required": true,
+      "labelKey": "complaint.f.workEnd",
+      "visibleWhen": { "field": "employmentStatus", "values": ["stopped"] },
+      "notBeforeField": "workStart",
+      "notFuture": true
+    },
+    {
+      "id": "workEndAccuracy",
+      "type": "select",
+      "required": false,
+      "labelKey": "complaint.f.workEndAccuracy",
+      "options": [
+        { "value": "exact", "labelKey": "complaint.date.exact" },
+        { "value": "approximate", "labelKey": "complaint.date.approximate" }
+      ],
+      "visibleWhen": { "field": "employmentStatus", "values": ["stopped"] }
+    },
+    {
+      "id": "expectedStart",
+      "type": "monthYear",
+      "required": true,
+      "labelKey": "complaint.f.expectedStart",
+      "visibleWhen": { "field": "employmentStatus", "values": ["not_started"] }
+    },
+    {
+      "id": "expectedStartAccuracy",
+      "type": "select",
+      "required": false,
+      "labelKey": "complaint.f.expectedStartAccuracy",
+      "options": [
+        { "value": "exact", "labelKey": "complaint.date.exact" },
+        { "value": "approximate", "labelKey": "complaint.date.approximate" }
+      ],
+      "visibleWhen": { "field": "employmentStatus", "values": ["not_started"] }
+    },
+    {
+      "id": "contractCopy",
+      "type": "select",
+      "required": true,
+      "labelKey": "complaint.f.contractCopy",
+      "options": [
+        { "value": "yes", "labelKey": "complaint.pdf.contractCopy.yes" },
+        { "value": "no", "labelKey": "complaint.pdf.contractCopy.no" },
+        { "value": "unknown", "labelKey": "complaint.pdf.contractCopy.unknown" }
+      ]
+    }
   ],
   "employerFields": [
     { "id": "employerName", "type": "text", "required": true, "labelKey": "complaint.f.employerName", "hintKey": "complaint.f.employerName.hint" },
@@ -36,11 +157,48 @@
     { "id": "employerRegCom", "type": "text", "required": false, "labelKey": "complaint.f.employerRegCom" },
     { "id": "employerCui", "type": "text", "required": false, "labelKey": "complaint.f.employerCui" }
   ],
+  "partyTypes": [
+    {
+      "id": "employer",
+      "labelKey": "complaint.party.employer",
+      "fields": [
+        { "id": "employerName", "type": "text", "required": false, "labelKey": "complaint.f.employerName", "hintKey": "complaint.f.employerName.hint", "requiredAnyOf": ["employerName", "employerDetails"] },
+        { "id": "employerCounty", "type": "county", "required": true, "labelKey": "complaint.f.employerCounty", "allowUnknown": true },
+        { "id": "employerAddress", "type": "text", "required": false, "labelKey": "complaint.f.employerAddress" },
+        { "id": "employerRegCom", "type": "text", "required": false, "labelKey": "complaint.f.employerRegCom" },
+        { "id": "employerCui", "type": "text", "required": false, "labelKey": "complaint.f.employerCui" },
+        { "id": "employerDetails", "type": "text", "required": false, "labelKey": "complaint.f.employerDetails", "hintKey": "complaint.f.partyDetails.hint", "requiredAnyOf": ["employerName", "employerDetails"] }
+      ]
+    },
+    {
+      "id": "agency",
+      "labelKey": "complaint.party.agency",
+      "fields": [
+        { "id": "agencyName", "type": "text", "required": false, "labelKey": "complaint.f.agencyName", "requiredAnyOf": ["agencyName", "agencyDetails"] },
+        { "id": "agencyCounty", "type": "county", "required": true, "labelKey": "complaint.f.agencyCounty", "allowUnknown": true },
+        { "id": "agencyAddress", "type": "text", "required": false, "labelKey": "complaint.f.agencyAddress" },
+        { "id": "agencyRegCom", "type": "text", "required": false, "labelKey": "complaint.f.agencyRegCom" },
+        { "id": "agencyCui", "type": "text", "required": false, "labelKey": "complaint.f.agencyCui" },
+        { "id": "agencyDetails", "type": "text", "required": false, "labelKey": "complaint.f.agencyDetails", "hintKey": "complaint.f.partyDetails.hint", "requiredAnyOf": ["agencyName", "agencyDetails"] }
+      ]
+    },
+    {
+      "id": "other",
+      "labelKey": "complaint.party.other",
+      "fields": [
+        { "id": "otherName", "type": "text", "required": false, "labelKey": "complaint.f.otherName", "requiredAnyOf": ["otherName", "otherDetails"] },
+        { "id": "otherCounty", "type": "county", "required": true, "labelKey": "complaint.f.otherCounty", "allowUnknown": true },
+        { "id": "otherAddress", "type": "text", "required": false, "labelKey": "complaint.f.otherAddress" },
+        { "id": "otherDetails", "type": "text", "required": false, "labelKey": "complaint.f.otherDetails", "hintKey": "complaint.f.partyDetails.hint", "requiredAnyOf": ["otherName", "otherDetails"] }
+      ]
+    }
+  ],
   "categories": [
     {
       "id": "unpaid_wages",
       "labelKey": "complaint.cat.unpaid_wages",
       "requiresEmployer": true,
+      "suggestedPartyIds": ["employer"],
       "violations": [
         { "id": "no_salary", "labelKey": "complaint.v.unpaid.no_salary", "sentenceKey": "complaint.v.unpaid.no_salary.ro" },
         { "id": "partial_pay", "labelKey": "complaint.v.unpaid.partial_pay", "sentenceKey": "complaint.v.unpaid.partial_pay.ro" },
@@ -48,124 +206,78 @@
         { "id": "no_payslip", "labelKey": "complaint.v.unpaid.no_payslip", "sentenceKey": "complaint.v.unpaid.no_payslip.ro" }
       ],
       "fields": [
-        { "id": "period", "type": "text", "required": true, "labelKey": "complaint.f.period" },
-        { "id": "amount", "type": "text", "required": false, "labelKey": "complaint.f.amount" },
+        { "id": "noSalaryPeriod", "type": "text", "required": false, "labelKey": "complaint.f.noSalaryPeriod", "visibleWhenViolationIds": ["no_salary"], "requiredWhenViolationIds": ["no_salary"] },
+        { "id": "partialPayPeriod", "type": "text", "required": false, "labelKey": "complaint.f.partialPayPeriod", "visibleWhenViolationIds": ["partial_pay"], "requiredWhenViolationIds": ["partial_pay"] },
+        { "id": "amount", "type": "text", "required": false, "labelKey": "complaint.f.amount", "visibleWhenViolationIds": ["partial_pay"] },
         { "id": "freeText", "type": "freetext", "required": false, "labelKey": "complaint.f.freeText" }
       ],
-      "destinations": { "default": ["itm"], "undocumented": "warning_then_choice" },
+      "destinations": { "default": ["itm"] },
       "templateKey": "complaint.tpl.unpaid_wages"
     },
     {
       "id": "working_time",
       "labelKey": "complaint.cat.working_time",
       "requiresEmployer": true,
+      "suggestedPartyIds": ["employer"],
       "violations": [
         { "id": "excessive_hours", "labelKey": "complaint.v.working_time.excessive_hours", "sentenceKey": "complaint.v.working_time.excessive_hours.ro" },
         { "id": "no_weekly_rest", "labelKey": "complaint.v.working_time.no_weekly_rest", "sentenceKey": "complaint.v.working_time.no_weekly_rest.ro" },
         { "id": "no_leave", "labelKey": "complaint.v.working_time.no_leave", "sentenceKey": "complaint.v.working_time.no_leave.ro" }
       ],
       "fields": [{ "id": "freeText", "type": "freetext", "required": false, "labelKey": "complaint.f.freeText" }],
-      "destinations": { "default": ["itm"], "undocumented": "warning_then_choice" },
+      "destinations": { "default": ["itm"] },
       "templateKey": "complaint.tpl.working_time"
     },
     {
       "id": "documents_withheld",
       "labelKey": "complaint.cat.documents_withheld",
       "requiresEmployer": true,
+      "suggestedPartyIds": ["employer"],
       "violations": [
         { "id": "passport_kept", "labelKey": "complaint.v.documents.passport_kept", "sentenceKey": "complaint.v.documents.passport_kept.ro", "emergencyBanner": true },
         { "id": "permit_kept", "labelKey": "complaint.v.documents.permit_kept", "sentenceKey": "complaint.v.documents.permit_kept.ro" },
         { "id": "no_contract_copy", "labelKey": "complaint.v.documents.no_contract_copy", "sentenceKey": "complaint.v.documents.no_contract_copy.ro" }
       ],
       "fields": [{ "id": "freeText", "type": "freetext", "required": false, "labelKey": "complaint.f.freeText" }],
-      "destinations": { "default": ["itm"], "undocumented": "warning_then_choice" },
+      "destinations": { "default": ["itm"] },
       "templateKey": "complaint.tpl.documents_withheld"
-    },
-    {
-      "id": "housing",
-      "labelKey": "complaint.cat.housing",
-      "requiresEmployer": true,
-      "violations": [
-        { "id": "rent_over_limit", "labelKey": "complaint.v.housing.rent_over_limit", "sentenceKey": "complaint.v.housing.rent_over_limit.ro" },
-        { "id": "rent_no_consent", "labelKey": "complaint.v.housing.rent_no_consent", "sentenceKey": "complaint.v.housing.rent_no_consent.ro" },
-        { "id": "bad_conditions", "labelKey": "complaint.v.housing.bad_conditions", "sentenceKey": "complaint.v.housing.bad_conditions.ro" }
-      ],
-      "fields": [{ "id": "freeText", "type": "freetext", "required": false, "labelKey": "complaint.f.freeText" }],
-      "destinations": { "default": ["itm"], "undocumented": "warning_then_choice" },
-      "templateKey": "complaint.tpl.housing"
     },
     {
       "id": "termination",
       "labelKey": "complaint.cat.termination",
       "requiresEmployer": true,
+      "suggestedPartyIds": ["employer"],
       "violations": [
         { "id": "no_docs_on_exit", "labelKey": "complaint.v.termination.no_docs_on_exit", "sentenceKey": "complaint.v.termination.no_docs_on_exit.ro" },
         { "id": "forced_resignation", "labelKey": "complaint.v.termination.forced_resignation", "sentenceKey": "complaint.v.termination.forced_resignation.ro" },
         { "id": "final_pay_missing", "labelKey": "complaint.v.termination.final_pay_missing", "sentenceKey": "complaint.v.termination.final_pay_missing.ro" }
       ],
       "fields": [{ "id": "freeText", "type": "freetext", "required": false, "labelKey": "complaint.f.freeText" }],
-      "destinations": { "default": ["itm"], "undocumented": "warning_then_choice" },
+      "destinations": { "default": ["itm"] },
       "templateKey": "complaint.tpl.termination"
-    },
-    {
-      "id": "employer_change",
-      "labelKey": "complaint.cat.employer_change",
-      "requiresEmployer": true,
-      "violations": [
-        { "id": "change_blocked", "labelKey": "complaint.v.employer_change.change_blocked", "sentenceKey": "complaint.v.employer_change.change_blocked.ro" },
-        { "id": "threat_status", "labelKey": "complaint.v.employer_change.threat_status", "sentenceKey": "complaint.v.employer_change.threat_status.ro" }
-      ],
-      "fields": [{ "id": "freeText", "type": "freetext", "required": false, "labelKey": "complaint.f.freeText" }],
-      "destinations": { "default": ["igi"], "undocumented": "warning_then_choice" },
-      "templateKey": "complaint.tpl.employer_change"
-    },
-    {
-      "id": "health_safety",
-      "labelKey": "complaint.cat.health_safety",
-      "requiresEmployer": true,
-      "violations": [
-        { "id": "no_equipment", "labelKey": "complaint.v.health.no_equipment", "sentenceKey": "complaint.v.health.no_equipment.ro" },
-        { "id": "no_training", "labelKey": "complaint.v.health.no_training", "sentenceKey": "complaint.v.health.no_training.ro" },
-        { "id": "accident_hidden", "labelKey": "complaint.v.health.accident_hidden", "sentenceKey": "complaint.v.health.accident_hidden.ro" }
-      ],
-      "fields": [{ "id": "freeText", "type": "freetext", "required": false, "labelKey": "complaint.f.freeText" }],
-      "destinations": { "default": ["itm"], "undocumented": "warning_then_choice" },
-      "templateKey": "complaint.tpl.health_safety"
-    },
-    {
-      "id": "discrimination",
-      "labelKey": "complaint.cat.discrimination",
-      "requiresEmployer": true,
-      "violations": [
-        { "id": "worse_conditions", "labelKey": "complaint.v.discrimination.worse_conditions", "sentenceKey": "complaint.v.discrimination.worse_conditions.ro" },
-        { "id": "harassment", "labelKey": "complaint.v.discrimination.harassment", "sentenceKey": "complaint.v.discrimination.harassment.ro" }
-      ],
-      "fields": [{ "id": "freeText", "type": "freetext", "required": false, "labelKey": "complaint.f.freeText" }],
-      "destinations": { "default": ["cncd"], "undocumented": "warning_then_choice" },
-      "templateKey": "complaint.tpl.discrimination"
     },
     {
       "id": "agency",
       "labelKey": "complaint.cat.agency",
       "requiresEmployer": false,
+      "suggestedPartyIds": ["agency"],
       "violations": [
         { "id": "illegal_fees", "labelKey": "complaint.v.agency.illegal_fees", "sentenceKey": "complaint.v.agency.illegal_fees.ro" },
         { "id": "different_conditions", "labelKey": "complaint.v.agency.different_conditions", "sentenceKey": "complaint.v.agency.different_conditions.ro" },
         { "id": "return_cost_refused", "labelKey": "complaint.v.agency.return_cost_refused", "sentenceKey": "complaint.v.agency.return_cost_refused.ro" }
       ],
       "fields": [
-        { "id": "agencyName", "type": "text", "required": true, "labelKey": "complaint.f.agencyName" },
-        { "id": "agencyCounty", "type": "county", "required": true, "labelKey": "complaint.f.agencyCounty" },
-        { "id": "agencyCui", "type": "text", "required": false, "labelKey": "complaint.f.agencyCui" },
         { "id": "freeText", "type": "freetext", "required": false, "labelKey": "complaint.f.freeText" }
       ],
-      "destinations": { "default": ["itm"], "undocumented": "warning_then_choice" },
+      "routingCountyFields": { "itm": "agencyCounty" },
+      "destinations": { "default": ["itm"] },
       "templateKey": "complaint.tpl.agency"
     },
     {
       "id": "other",
       "labelKey": "complaint.cat.other",
       "requiresEmployer": false,
+      "suggestedPartyIds": ["other"],
       "violations": [],
       "fields": [{ "id": "freeText", "type": "freetext", "required": true, "labelKey": "complaint.f.freeText" }],
       "destinations": { "default": ["foundation"] },

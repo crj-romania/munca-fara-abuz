@@ -22,9 +22,9 @@ export default function HomeScreen() {
         onPress={() => router.push('/info')}
       />
       <HomeAction
-        disabled
         icon="document-text-outline"
         label={t('home.problem')}
+        onPress={() => router.push('/complaint')}
       />
       <HomeAction
         danger
@@ -40,9 +40,9 @@ export default function HomeScreen() {
         variant="secondary"
       />
       <AppButton
-        disabled
         icon="folder-open-outline"
         label={t('home.documents')}
+        onPress={() => router.push('/documents')}
         variant="secondary"
       />
 

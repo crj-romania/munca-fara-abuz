@@ -22,6 +22,7 @@ import i18n, {
 } from '@/src/i18n/i18n';
 import { getSavedLanguage, saveLanguage } from '@/src/storage/preferences';
 import type { ContentBundle, LanguageDefinition } from '@/src/types/content';
+import { deletePreviousTranslationModel } from '@/src/translation/engine';
 
 type ContentContextValue = {
   content: ContentBundle;
@@ -92,6 +93,9 @@ export function ContentProvider({ children }: PropsWithChildren) {
         throw new Error('Unknown language.');
       }
 
+      const previous = content.index.languages.find(({ code }) => code === selectedLanguage);
+      // No text leaves the device; no new model is downloaded on language change.
+      await deletePreviousTranslationModel(previous, language).catch(() => {});
       await i18n.changeLanguage(languageCode);
       await saveLanguage(languageCode);
       setSelectedLanguage(languageCode);
@@ -109,7 +113,7 @@ export function ContentProvider({ children }: PropsWithChildren) {
 
       return directionChanged;
     },
-    [content],
+    [content, selectedLanguage],
   );
 
   const value = useMemo<ContentContextValue | null>(() => {
