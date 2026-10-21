@@ -1,14 +1,26 @@
 # Muncă Fără Abuz — Faza 4
 
-## Predare remote — 17 septembrie 2026
+## Stare — 9 octombrie 2026 (preluare de către Claude)
 
-[Rezumatul editării template-urilor și punctul de reluare](SUMAR_editare_templateuri.md).
-Acesta este un snapshot de lucru: modificarea perioadelor salariale separate
-este neterminată. Verificarea completă `npm run check:phase4` eșuează cu
-`Unsupported content index` (validator schema 1 / conținut schema 2); există și
-o regresie care tratează câmpuri opționale drept obligatorii. Problemele și
-pașii de reluare sunt documentați în rezumat. Descrierea Fazei 4 și a APK-ului
-de mai jos nu certifică funcționarea acestui snapshot ulterior.
+Problemele din predarea din 17 septembrie ([rezumat](SUMAR_editare_templateuri.md))
+sunt remediate: validatorul acceptă schema 2 (snapshotul anterior nu putea
+încărca nici conținutul împachetat), validarea structurii `complaint.json` și a
+rutării a fost reconstituită (inclusiv condițiile pe fapte), câmpurile opționale
+nu mai sunt tratate drept obligatorii, iar perioadele salariale separate au teste.
+`npm run check:phase4` trece integral. Nu s-a construit un APK nou și nu s-a
+testat pe telefon după aceste remedieri.
+
+Tot pe 9 octombrie: fraze factuale cu completări condiționate, corelarea
+categoriei cu situația muncii, copia contractului întrebată o singură dată,
+indicații pentru textul liber și Google Translate precompletat — vezi SPEC §12.
+
+**Upgrade Expo SDK 54 → 57** (React Native 0.86): după actualizarea sursei,
+rulează o dată `npm install` înainte de `npx expo start`. Expo Go trebuie să fie
+versiunea pentru SDK 57 (și cere autentificare cu contul Expo). Modulul nativ
+ML Kit nu a fost încă recompilat pe SDK 57 — se verifică la următorul build EAS.
+`expo-modules-core` nu mai este dependență directă (importul vine din `expo`);
+`react-native-reanimated`/`react-native-worklets` sunt fixate la versiunile
+SDK 57, fiind cerute de `expo-router`.
 
 Aplicație Expo (React Native + TypeScript). Livrarea curentă conține Fazele 1–4
 din SPEC §9: motorul de conținut, fluxul de informații și urgență, formularul de

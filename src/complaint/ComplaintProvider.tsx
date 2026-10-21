@@ -20,7 +20,12 @@ import { clearDraftAttachments, initializeComplaintAttachmentCache, removeDraftA
 type ComplaintContextValue = {
   draft: ComplaintDraft;
   generated: GeneratedComplaint | null;
-  startComplaint: (categoryId: string, suggestedPartyIds?: string[], textLanguage?: string) => void;
+  startComplaint: (
+    categoryId: string,
+    suggestedPartyIds?: string[],
+    textLanguage?: string,
+    initialValues?: Record<string, string>,
+  ) => void;
   toggleParty: (partyId: string) => void;
   setFieldValue: (fieldId: string, value: string) => void;
   toggleViolation: (violationId: string) => void;
@@ -65,9 +70,23 @@ export function ComplaintProvider({ children }: PropsWithChildren) {
   }, []);
   const [generated, setGenerated] = useState<GeneratedComplaint | null>(null);
 
-  const startComplaint = useCallback((categoryId: string, suggestedPartyIds: string[] = [], textLanguage = 'en') => {
+  const startComplaint = useCallback((
+    categoryId: string,
+    suggestedPartyIds: string[] = [],
+    textLanguage = 'en',
+    initialValues: Record<string, string> = {},
+  ) => {
     void clearDraftAttachments(draftRef.current.attachments).catch(() => {});
-    updateDraft(() => ({ ...emptyDraft(), categoryId, selectedPartyIds: [...suggestedPartyIds], textLanguage }));
+    updateDraft(() => {
+      const empty = emptyDraft();
+      return {
+        ...empty,
+        categoryId,
+        selectedPartyIds: [...suggestedPartyIds],
+        textLanguage,
+        values: { ...empty.values, ...initialValues },
+      };
+    });
     setGenerated(null);
   }, [updateDraft]);
 

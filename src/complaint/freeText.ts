@@ -34,8 +34,23 @@ export function getNarrativeError(category: ComplaintCategory, draft: ComplaintD
   return undefined;
 }
 
-// Never place a complaint or personal text in a URL / browser history.
-export function getGoogleTranslateUrl(sourceLanguage: string): string {
+// Above this length the link opens without the text and the user pastes it
+// (very long URLs can be rejected by the browser or by Google).
+export const GOOGLE_TRANSLATE_URL_LIMIT = 8000;
+
+// Opens Google Translate with the text already filled in (decision 2026-10-09:
+// for this audience the copy/paste round trip costs more than it protects —
+// the text reaches Google either way). The user is warned before opening.
+export function getGoogleTranslateLink(
+  sourceLanguage: string,
+  text = '',
+): { url: string; includesText: boolean } {
   const source = /^[a-z]{2,3}(?:-[A-Za-z]{2,4})?$/.test(sourceLanguage) ? sourceLanguage : 'auto';
-  return `https://translate.google.com/?sl=${encodeURIComponent(source)}&tl=ro&op=translate`;
+  const base = `https://translate.google.com/?sl=${encodeURIComponent(source)}&tl=ro&op=translate`;
+  const trimmed = text.trim();
+  if (!trimmed) return { url: base, includesText: false };
+  const withText = `${base}&text=${encodeURIComponent(trimmed)}`;
+  return withText.length <= GOOGLE_TRANSLATE_URL_LIMIT
+    ? { url: withText, includesText: true }
+    : { url: base, includesText: false };
 }

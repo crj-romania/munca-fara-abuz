@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useComplaint } from '@/src/complaint/ComplaintProvider';
 import { AppScreen } from '@/src/components/AppScreen';
 import { ComplaintFieldsStep } from '@/src/components/ComplaintFieldsStep';
-import { findComplaintCategory, getComplaintContent } from '@/src/content/complaintContent';
+import { findComplaintCategory, getCategoryWorkFields, getComplaintContent } from '@/src/content/complaintContent';
 import { useContent } from '@/src/content/ContentProvider';
 
 export default function ComplaintWorkScreen() {
@@ -22,7 +22,7 @@ export default function ComplaintWorkScreen() {
       <ComplaintFieldsStep
         titleKey="complaint.work.title"
         descriptionKey="complaint.work.description"
-        fields={complaint.workFields}
+        fields={getCategoryWorkFields(complaint, category)}
         onContinue={() => router.navigate(category.violations.length ? '/complaint/violations' : '/complaint/details')}
       />
     </AppScreen>

@@ -118,7 +118,19 @@ export type ComplaintViolation = {
   id: string;
   labelKey: string;
   sentenceKey: string;
+  // Optional sentence fragments appended after the main sentence: included only
+  // when `field` is filled (and, if `values` is set, has one of those values).
+  details?: ComplaintSentenceDetail[];
+  // Alternative main sentences: the first one whose field matches replaces
+  // `sentenceKey` (e.g. "The employer keeps my passport" vs. "The agency …").
+  variants?: ComplaintSentenceDetail[];
   emergencyBanner?: boolean;
+};
+
+export type ComplaintSentenceDetail = {
+  field: string;
+  values?: string[];
+  sentenceKey: string;
 };
 
 export type ComplaintStatusQuestion = {
@@ -130,6 +142,8 @@ export type ComplaintCategory = {
   id: string;
   labelKey: string;
   requiresEmployer: boolean;
+  // Work situations that make sense for this category (default: all).
+  employmentStatuses?: string[];
   suggestedPartyIds: string[];
   violations: ComplaintViolation[];
   fields: ComplaintField[];

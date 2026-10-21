@@ -8,6 +8,7 @@ import { ContentListItem } from '@/src/components/ContentListItem';
 import { SectionCard } from '@/src/components/SectionCard';
 import {
   getComplaintContent,
+  getInitialCategoryValues,
   isPhase3CategoryAvailable,
 } from '@/src/content/complaintContent';
 import { useContent } from '@/src/content/ContentProvider';
@@ -42,7 +43,8 @@ export default function ComplaintCategoryScreen() {
             key={category.id}
             label={t(category.labelKey)}
             onPress={() => {
-              startComplaint(category.id, category.suggestedPartyIds, currentLanguage.code);
+              startComplaint(category.id, category.suggestedPartyIds, currentLanguage.code,
+                getInitialCategoryValues(category));
               router.navigate('/complaint/identity');
             }}
           />

@@ -231,7 +231,6 @@ assert.doesNotMatch(mononymHtml, /STALE/);
 
 const reversed = baseDraft({ values: { ...baseDraft().values, employmentStatus: 'stopped', workEnd: '2023-12', workEndAccuracy: 'exact' } });
 expectThrows(() => pdf.buildComplaintHtml({ complaint, category, draft: reversed, institutions, ro }), 'dateOrder');
-expectThrows(() => pdf.buildComplaintHtml({ complaint, category, draft: baseDraft({ selectedViolationIds: ['no_contract_copy'], values: { ...baseDraft().values, contractCopy: 'yes' } }), institutions, ro }), 'contractCopyConflict');
 expectThrows(() => pdf.buildComplaintHtml({ complaint, category, draft: baseDraft({ selectedPartyIds: [] }), institutions, ro }), 'party');
 expectThrows(() => pdf.buildComplaintHtml({ complaint, category, draft: baseDraft({ selectedViolationIds: ['missing'] }), institutions, ro }), 'violation');
 
@@ -262,9 +261,15 @@ expectThrows(() => renderDraft(baseDraft({ values: { ...baseDraft().values, work
 for (const phone of ['+977 (980) 123-4567', '0094 77 123 4567', '+٩٧٧ ٩٨٠١٢٣٤٥٦٧']) {
   renderDraft(baseDraft({ values: { ...baseDraft().values, phone } }));
 }
-const copyNo = renderDraft(baseDraft({ selectedViolationIds: ['no_contract_copy'], values: { ...baseDraft().values, contractCopy: 'no' } })).html;
-assert.match(copyNo, /Nu am primit o copie a contractului de muncă\./);
+// Contract copy is asked once; "no" is stated once, among the facts (not in the work table).
+const copyNo = pdf.buildComplaintHtml({ complaint, category, institutions,
+  ro: { ...ro, 'complaint.v.common.no_contract_copy.ro': 'FACT-NO-COPY.' },
+  draft: baseDraft({ values: { ...baseDraft().values, contractCopy: 'no' } }) }).html;
+assert.equal(copyNo.match(/FACT-NO-COPY/g)?.length, 1);
+assert.doesNotMatch(copyNo, /Nu am primit o copie a contractului de muncă\./);
 assert.doesNotMatch(copyNo, /muncă la negru|nu am semnat|fără contract/i);
+assert.doesNotMatch(renderDraft(baseDraft({ values: { ...baseDraft().values, contractCopy: 'yes' } })).html,
+  /complaint\.v\.common\.no_contract_copy/);
 assert.match(renderDraft(baseDraft({ values: { ...baseDraft().values, contractCopy: 'unknown' } })).html,
   /Nu știu dacă am primit o copie a contractului de muncă\./);
 assert.doesNotMatch(renderDraft(baseDraft({ values: { ...baseDraft().values, agencyName: 'DESELECTED-AGENCY', workEnd: 'DESELECTED-END' } })).html,
@@ -281,15 +286,118 @@ const actualComplaint = validatedBundle.documents[bundledIndex.files.complaint];
 const actualCategory = actualComplaint.categories.find((item) => item.id === 'unpaid_wages');
 const actualRo = validatedBundle.strings.ro;
 const actualDraft = baseDraft({ categoryId: actualCategory.id, selectedViolationIds: ['no_salary'],
-  values: { ...baseDraft().values, citizenship: 'Nepal' } });
-const actualHtml = pdf.buildComplaintHtml({ complaint: actualComplaint, category: actualCategory, draft: actualDraft,
-  institutions: validatedBundle.documents[bundledIndex.files.institutions], ro: actualRo }).html;
+  values: { ...baseDraft().values, citizenship: 'Nepal', noSalaryPeriod: 'ianuarie–martie 2026' } });
+const actualInstitutions = validatedBundle.documents[bundledIndex.files.institutions];
+const renderActual = (draft) => pdf.buildComplaintHtml({ complaint: actualComplaint, category: actualCategory, draft,
+  institutions: actualInstitutions, ro: actualRo }).html;
+const actualHtml = renderActual(actualDraft);
 assert.match(actualHtml, /Nepal/);
 assert.doesNotMatch(actualHtml, /complaint\.[a-zA-Z]/);
 const malformed = structuredClone(actualComplaint);
 malformed.workFields.push({ ...malformed.commonFields[0] });
 expectThrows(() => contentValidation.validateBundle(bundledIndex,
   (path) => path === bundledIndex.files.complaint ? malformed : bundledReadJson(path), 'cache'), 'Duplicate active');
+const unknownViolationRef = structuredClone(actualComplaint);
+unknownViolationRef.categories.find((item) => item.id === 'unpaid_wages').fields[0].requiredWhenViolationIds = ['typo'];
+expectThrows(() => contentValidation.validateBundle(bundledIndex,
+  (path) => path === bundledIndex.files.complaint ? unknownViolationRef : bundledReadJson(path), 'cache'), 'unknown violation');
+
+// Optional fields stay optional: no condition must never mean "always required".
+const optionalField = field('optionalNote');
+assert.equal(contentHelpers.isComplaintFieldRequired(optionalField, {}, []), false);
+assert.equal(contentHelpers.isComplaintFieldRequired(optionalField, {}, ['no_salary']), false);
+assert.equal(contentHelpers.getComplaintFieldError(optionalField, {}, []), undefined);
+const actualCnp = actualComplaint.commonFields.find((item) => item.id === 'cnp');
+assert.equal(contentHelpers.getComplaintFieldError(actualCnp, { idType: 'passport' }, []), undefined);
+assert.equal(contentHelpers.getComplaintFieldError(actualCnp, { idType: 'trc' }, []), 'complaint.validation.required');
+for (const party of actualComplaint.partyTypes) {
+  for (const partyField of party.fields.filter((item) => !item.required && !item.requiredAnyOf && !item.requiredWhen)) {
+    assert.equal(contentHelpers.getComplaintFieldError(partyField, {}, []), undefined, `${partyField.id} must stay optional`);
+  }
+}
+
+// Salary periods: each selected fact carries its own period; deselected facts leave no trace.
+const salaryValues = { ...baseDraft().values, citizenship: 'Nepal', noSalaryPeriod: 'PERIOD-NO-SALARY', partialPayPeriod: 'PERIOD-PARTIAL', amount: '1500' };
+const onlyNoSalary = renderActual(baseDraft({ categoryId: 'unpaid_wages', selectedViolationIds: ['no_salary'], values: salaryValues }));
+assert.match(onlyNoSalary, /PERIOD-NO-SALARY/);
+assert.doesNotMatch(onlyNoSalary, /PERIOD-PARTIAL|1500/);
+const onlyPartial = renderActual(baseDraft({ categoryId: 'unpaid_wages', selectedViolationIds: ['partial_pay'], values: salaryValues }));
+assert.match(onlyPartial, /PERIOD-PARTIAL/);
+assert.match(onlyPartial, /1500/);
+assert.doesNotMatch(onlyPartial, /PERIOD-NO-SALARY/);
+const bothPeriods = renderActual(baseDraft({ categoryId: 'unpaid_wages', selectedViolationIds: ['no_salary', 'partial_pay'], values: salaryValues }));
+assert.match(bothPeriods, /PERIOD-NO-SALARY/);
+assert.match(bothPeriods, /PERIOD-PARTIAL/);
+// Optional data is an appended fragment, never "nespecificat" inside a sentence,
+// and data written into a sentence is not repeated in the facts table.
+const partialNoAmount = renderActual(baseDraft({ categoryId: 'unpaid_wages', selectedViolationIds: ['partial_pay'], values: { ...salaryValues, amount: '' } }));
+assert.doesNotMatch(partialNoAmount, /nespecificat/);
+assert.doesNotMatch(partialNoAmount, /Suma neplătită/);
+assert.equal(onlyPartial.match(/1500/g)?.length, 1);
+assert.equal(onlyPartial.match(/PERIOD-PARTIAL/g)?.length, 1);
+assert.match(onlyPartial, /Suma neplătită este de aproximativ 1500 lei\./);
+
+// Category ↔ work situation: termination only allows "stopped" and preselects it.
+const terminationCategory = actualComplaint.categories.find((item) => item.id === 'termination');
+assertSameData(contentHelpers.getInitialCategoryValues(terminationCategory), { employmentStatus: 'stopped' });
+assertSameData(contentHelpers.getInitialCategoryValues(actualCategory), {});
+const terminationStatus = contentHelpers.getCategoryWorkFields(actualComplaint, terminationCategory)
+  .find((item) => item.id === 'employmentStatus');
+assertSameData(terminationStatus.options.map(({ value }) => value), ['stopped']);
+const terminationBase = { ...salaryValues, workEnd: '2025-06' };
+const renderTermination = (values) => pdf.buildComplaintHtml({ complaint: actualComplaint, category: terminationCategory,
+  institutions: actualInstitutions, ro: actualRo,
+  draft: baseDraft({ categoryId: 'termination', selectedViolationIds: ['final_pay_missing'], values }) }).html;
+renderTermination({ ...terminationBase, employmentStatus: 'stopped' });
+expectThrows(() => renderTermination({ ...terminationBase, employmentStatus: 'working' }), 'employmentStatus');
+assert.equal(actualComplaint.categories.some((item) => item.violations.some(({ id }) => id === 'no_contract_copy')), false);
+
+// Fact sentences state facts only; legal qualification belongs to the templates.
+for (const item of actualComplaint.categories) {
+  for (const violation of item.violations) {
+    for (const key of [violation.sentenceKey,
+      ...[...(violation.details ?? []), ...(violation.variants ?? [])].map(({ sentenceKey }) => sentenceKey)]) {
+      assert.doesNotMatch(actualRo[key], /contrar legii|legea o obligă|prevăzut[ea]? de lege|durata maximă legală|la care am dreptul/i, key);
+    }
+  }
+}
+const badDetail = structuredClone(actualComplaint);
+badDetail.categories.find((item) => item.id === 'unpaid_wages').violations[1].details = [{ field: 'nope', sentenceKey: 'x' }];
+expectThrows(() => contentValidation.validateBundle(bundledIndex,
+  (path) => path === bundledIndex.files.complaint ? badDetail : bundledReadJson(path), 'cache'), 'unknown field');
+// Variants replace the main sentence: who keeps the documents / who was paid.
+const documentsCategory = actualComplaint.categories.find((item) => item.id === 'documents_withheld');
+const renderDocuments = (selectedViolationIds, extra) => pdf.buildComplaintHtml({ complaint: actualComplaint,
+  category: documentsCategory, institutions: actualInstitutions, ro: actualRo,
+  draft: baseDraft({ categoryId: 'documents_withheld', selectedViolationIds, values: { ...salaryValues, ...extra } }) }).html;
+const holderHtml = renderDocuments(['passport_kept', 'permit_kept'], { documentsHolder: 'agency' });
+assert.match(holderHtml, /Agenția de recrutare îmi reține pașaportul/);
+assert.match(holderHtml, /Agenția de recrutare îmi reține permisul de ședere/);
+assert.doesNotMatch(holderHtml, /Pașaportul meu este reținut/);
+assert.doesNotMatch(holderHtml, /Cine îți ține actele/); // stated in the sentence, not repeated in a table
+expectThrows(() => renderDocuments(['permit_kept'], { documentsHolder: '' }), 'documentsHolder');
+const agencyCategory = actualComplaint.categories.find((item) => item.id === 'agency');
+const renderAgency = (extra) => pdf.buildComplaintHtml({ complaint: actualComplaint, category: agencyCategory,
+  institutions: actualInstitutions, ro: actualRo,
+  draft: baseDraft({ categoryId: 'agency', selectedViolationIds: ['illegal_fees'], selectedPartyIds: ['agency'],
+    values: { ...salaryValues, agencyName: 'Agenția X', agencyCounty: 'AB', ...extra } }) }).html;
+assert.match(renderAgency({ feePaidTo: 'home_recruiter' }), /unui recrutor din țara mea de origine/);
+assert.match(renderAgency({ feePaidTo: 'ro_agency' }), /agenției din România/);
+assert.match(renderAgency({ feePaidTo: 'dont_know' }), /nu știu exact cine i-a primit/);
+expectThrows(() => renderAgency({ feePaidTo: '' }), 'feePaidTo');
+const badVariant = structuredClone(actualComplaint);
+badVariant.categories.find((item) => item.id === 'agency').violations[0].variants[0].values = ['typo'];
+expectThrows(() => contentValidation.validateBundle(bundledIndex,
+  (path) => path === bundledIndex.files.complaint ? badVariant : bundledReadJson(path), 'cache'), 'values do not match');
+
+const badStatus = structuredClone(actualComplaint);
+badStatus.categories[0].employmentStatuses = ['retired'];
+expectThrows(() => contentValidation.validateBundle(bundledIndex,
+  (path) => path === bundledIndex.files.complaint ? badStatus : bundledReadJson(path), 'cache'), 'employmentStatuses');
+expectThrows(() => renderActual(baseDraft({ categoryId: 'unpaid_wages', selectedViolationIds: ['no_salary'],
+  values: { ...salaryValues, noSalaryPeriod: '' } })), 'noSalaryPeriod');
+expectThrows(() => renderActual(baseDraft({ categoryId: 'unpaid_wages', selectedViolationIds: ['partial_pay'],
+  values: { ...salaryValues, partialPayPeriod: ' ' } })), 'partialPayPeriod');
 
 // Phase 4: optional additions, narrative-only complaints, translation freshness and privacy.
 const freeText = loadModule('@/src/complaint/freeText');
@@ -350,11 +458,23 @@ const otherResult = pdf.buildComplaintHtml({ complaint: actualComplaint, categor
   institutions: validatedBundle.documents[bundledIndex.files.institutions], ro: actualRo });
 assertSameData(otherResult.recipients, []); // Do not guess an authority or email the foundation.
 assert.equal(otherResult.templateReady, false);
-const url = new URL(freeText.getGoogleTranslateUrl('ne'));
+// Google Translate opens prefilled; too-long texts fall back to copy/paste.
+const prefilled = freeText.getGoogleTranslateLink('ne', '  मेरो तलब & <b>  ');
+const url = new URL(prefilled.url);
+assert.equal(prefilled.includesText, true);
 assert.equal(url.origin, 'https://translate.google.com');
 assert.equal(url.searchParams.get('sl'), 'ne');
 assert.equal(url.searchParams.get('tl'), 'ro');
-assert.equal(url.searchParams.has('text'), false);
-assert.equal(new URL(freeText.getGoogleTranslateUrl('en&text=PRIVATE')).searchParams.get('sl'), 'auto');
+assert.equal(url.searchParams.get('text'), 'मेरो तलब & <b>');
+const emptyLink = freeText.getGoogleTranslateLink('ne', '   ');
+assert.equal(emptyLink.includesText, false);
+assert.equal(new URL(emptyLink.url).searchParams.has('text'), false);
+const longLink = freeText.getGoogleTranslateLink('ne', 'त'.repeat(1000));
+assert.equal(longLink.includesText, false);
+assert.ok(longLink.url.length <= freeText.GOOGLE_TRANSLATE_URL_LIMIT);
+assert.equal(new URL(longLink.url).searchParams.has('text'), false);
+const injected = new URL(freeText.getGoogleTranslateLink('en&text=PRIVATE', 'x').url);
+assert.equal(injected.searchParams.get('sl'), 'auto');
+assert.equal(injected.searchParams.getAll('text').length, 1);
 await pdf.generateComplaintPdf({ complaint, category: narrativeCategory, draft: directRomanian, institutions, ro: actualRo, categoryLabel: 'Test' });
 console.log('Complaint flow regression OK: structured facts, optional/free-text-only complaints, translation freshness, original annex, PDF privacy, selected parties and fail-safe routing.');

@@ -8,7 +8,7 @@ import ts from 'typescript';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const read = (file) => readFileSync(path.join(root, file), 'utf8');
 const packageJson = JSON.parse(read('package.json'));
-for (const dependency of ['expo-document-picker', 'expo-clipboard', 'expo-dev-client', 'expo-modules-core']) {
+for (const dependency of ['expo-document-picker', 'expo-clipboard', 'expo-dev-client']) {
   assert.ok(packageJson.dependencies[dependency], `Missing ${dependency}`);
 }
 const textScreen = read('app/complaint/text.tsx');

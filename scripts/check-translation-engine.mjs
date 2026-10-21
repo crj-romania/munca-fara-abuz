@@ -81,7 +81,7 @@ function loadEngine(nativeModule) {
   const moduleCache = new Map();
 
   function loadModule(request, parentPath = engineEntry) {
-    if (request === 'expo-modules-core') {
+    if (request === 'expo' || request === 'expo-modules-core') {
       return { requireOptionalNativeModule: () => nativeModule };
     }
 

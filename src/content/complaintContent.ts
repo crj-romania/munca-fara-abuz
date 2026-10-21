@@ -39,9 +39,13 @@ export function isComplaintFieldRequired(
   values: Record<string, string>,
   selectedViolationIds: string[] = [],
 ): boolean {
+  // A missing violation condition means "no extra requirement", not "always required".
   return field.required || Boolean(
     field.requiredWhen?.values.includes(values[field.requiredWhen.field] ?? ''),
-  ) || matchesViolationCondition(field.requiredWhenViolationIds, selectedViolationIds);
+  ) || Boolean(
+    field.requiredWhenViolationIds?.length &&
+    matchesViolationCondition(field.requiredWhenViolationIds, selectedViolationIds),
+  );
 }
 
 export function getVisibleComplaintFields(
@@ -99,10 +103,25 @@ export function getSelectedPartyFields(complaint: ComplaintContent, draft: Compl
     .flatMap((party) => getVisibleComplaintFields(party.fields, draft.values));
 }
 
+// Work fields as seen by a category: the employment status only offers the
+// situations that make sense for it (e.g. "termination" → only "stopped").
+export function getCategoryWorkFields(complaint: ComplaintContent, category: ComplaintCategory): ComplaintField[] {
+  const allowed = category.employmentStatuses;
+  if (!allowed?.length) return complaint.workFields;
+  return complaint.workFields.map((field) => field.id === 'employmentStatus'
+    ? { ...field, options: field.options?.filter((option) => allowed.includes(option.value)) }
+    : field);
+}
+
+export function getInitialCategoryValues(category: ComplaintCategory): Record<string, string> {
+  const [only, ...others] = category.employmentStatuses ?? [];
+  return only && others.length === 0 ? { employmentStatus: only } : {};
+}
+
 export function getComplaintFields(complaint: ComplaintContent, category: ComplaintCategory, draft: ComplaintDraft): ComplaintField[] {
   return [
     ...getVisibleComplaintFields(complaint.commonFields, draft.values),
-    ...getVisibleComplaintFields(complaint.workFields, draft.values),
+    ...getVisibleComplaintFields(getCategoryWorkFields(complaint, category), draft.values),
     ...getVisibleComplaintFields(category.fields, draft.values, draft.selectedViolationIds),
     ...getSelectedPartyFields(complaint, draft),
   ];

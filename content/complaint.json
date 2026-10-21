@@ -198,10 +198,12 @@
       "id": "unpaid_wages",
       "labelKey": "complaint.cat.unpaid_wages",
       "requiresEmployer": true,
+      "employmentStatuses": ["working", "stopped"],
       "suggestedPartyIds": ["employer"],
       "violations": [
         { "id": "no_salary", "labelKey": "complaint.v.unpaid.no_salary", "sentenceKey": "complaint.v.unpaid.no_salary.ro" },
-        { "id": "partial_pay", "labelKey": "complaint.v.unpaid.partial_pay", "sentenceKey": "complaint.v.unpaid.partial_pay.ro" },
+        { "id": "partial_pay", "labelKey": "complaint.v.unpaid.partial_pay", "sentenceKey": "complaint.v.unpaid.partial_pay.ro",
+          "details": [{ "field": "amount", "sentenceKey": "complaint.v.unpaid.partial_pay.amount.ro" }] },
         { "id": "no_overtime", "labelKey": "complaint.v.unpaid.no_overtime", "sentenceKey": "complaint.v.unpaid.no_overtime.ro" },
         { "id": "no_payslip", "labelKey": "complaint.v.unpaid.no_payslip", "sentenceKey": "complaint.v.unpaid.no_payslip.ro" }
       ],
@@ -209,7 +211,7 @@
         { "id": "noSalaryPeriod", "type": "text", "required": false, "labelKey": "complaint.f.noSalaryPeriod", "visibleWhenViolationIds": ["no_salary"], "requiredWhenViolationIds": ["no_salary"] },
         { "id": "partialPayPeriod", "type": "text", "required": false, "labelKey": "complaint.f.partialPayPeriod", "visibleWhenViolationIds": ["partial_pay"], "requiredWhenViolationIds": ["partial_pay"] },
         { "id": "amount", "type": "text", "required": false, "labelKey": "complaint.f.amount", "visibleWhenViolationIds": ["partial_pay"] },
-        { "id": "freeText", "type": "freetext", "required": false, "labelKey": "complaint.f.freeText" }
+        { "id": "freeText", "type": "freetext", "required": false, "labelKey": "complaint.f.freeText", "hintKey": "complaint.f.freeText.hint.unpaid_wages" }
       ],
       "destinations": { "default": ["itm"] },
       "templateKey": "complaint.tpl.unpaid_wages"
@@ -218,13 +220,14 @@
       "id": "working_time",
       "labelKey": "complaint.cat.working_time",
       "requiresEmployer": true,
+      "employmentStatuses": ["working", "stopped"],
       "suggestedPartyIds": ["employer"],
       "violations": [
         { "id": "excessive_hours", "labelKey": "complaint.v.working_time.excessive_hours", "sentenceKey": "complaint.v.working_time.excessive_hours.ro" },
         { "id": "no_weekly_rest", "labelKey": "complaint.v.working_time.no_weekly_rest", "sentenceKey": "complaint.v.working_time.no_weekly_rest.ro" },
         { "id": "no_leave", "labelKey": "complaint.v.working_time.no_leave", "sentenceKey": "complaint.v.working_time.no_leave.ro" }
       ],
-      "fields": [{ "id": "freeText", "type": "freetext", "required": false, "labelKey": "complaint.f.freeText" }],
+      "fields": [{ "id": "freeText", "type": "freetext", "required": false, "labelKey": "complaint.f.freeText", "hintKey": "complaint.f.freeText.hint.working_time" }],
       "destinations": { "default": ["itm"] },
       "templateKey": "complaint.tpl.working_time"
     },
@@ -234,11 +237,35 @@
       "requiresEmployer": true,
       "suggestedPartyIds": ["employer"],
       "violations": [
-        { "id": "passport_kept", "labelKey": "complaint.v.documents.passport_kept", "sentenceKey": "complaint.v.documents.passport_kept.ro", "emergencyBanner": true },
-        { "id": "permit_kept", "labelKey": "complaint.v.documents.permit_kept", "sentenceKey": "complaint.v.documents.permit_kept.ro" },
-        { "id": "no_contract_copy", "labelKey": "complaint.v.documents.no_contract_copy", "sentenceKey": "complaint.v.documents.no_contract_copy.ro" }
+        { "id": "passport_kept", "labelKey": "complaint.v.documents.passport_kept", "sentenceKey": "complaint.v.documents.passport_kept.ro", "emergencyBanner": true,
+          "variants": [
+            { "field": "documentsHolder", "values": ["employer"], "sentenceKey": "complaint.v.documents.passport_kept.employer.ro" },
+            { "field": "documentsHolder", "values": ["agency"], "sentenceKey": "complaint.v.documents.passport_kept.agency.ro" },
+            { "field": "documentsHolder", "values": ["other"], "sentenceKey": "complaint.v.documents.passport_kept.other.ro" }
+          ] },
+        { "id": "permit_kept", "labelKey": "complaint.v.documents.permit_kept", "sentenceKey": "complaint.v.documents.permit_kept.ro",
+          "variants": [
+            { "field": "documentsHolder", "values": ["employer"], "sentenceKey": "complaint.v.documents.permit_kept.employer.ro" },
+            { "field": "documentsHolder", "values": ["agency"], "sentenceKey": "complaint.v.documents.permit_kept.agency.ro" },
+            { "field": "documentsHolder", "values": ["other"], "sentenceKey": "complaint.v.documents.permit_kept.other.ro" }
+          ] }
       ],
-      "fields": [{ "id": "freeText", "type": "freetext", "required": false, "labelKey": "complaint.f.freeText" }],
+      "fields": [
+        {
+          "id": "documentsHolder",
+          "type": "select",
+          "required": false,
+          "labelKey": "complaint.f.documentsHolder",
+          "options": [
+            { "value": "employer", "labelKey": "complaint.f.documentsHolder.employer" },
+            { "value": "agency", "labelKey": "complaint.f.documentsHolder.agency" },
+            { "value": "other", "labelKey": "complaint.f.documentsHolder.other" }
+          ],
+          "visibleWhenViolationIds": ["passport_kept", "permit_kept"],
+          "requiredWhenViolationIds": ["passport_kept", "permit_kept"]
+        },
+        { "id": "freeText", "type": "freetext", "required": false, "labelKey": "complaint.f.freeText", "hintKey": "complaint.f.freeText.hint.documents_withheld" }
+      ],
       "destinations": { "default": ["itm"] },
       "templateKey": "complaint.tpl.documents_withheld"
     },
@@ -246,13 +273,14 @@
       "id": "termination",
       "labelKey": "complaint.cat.termination",
       "requiresEmployer": true,
+      "employmentStatuses": ["stopped"],
       "suggestedPartyIds": ["employer"],
       "violations": [
         { "id": "no_docs_on_exit", "labelKey": "complaint.v.termination.no_docs_on_exit", "sentenceKey": "complaint.v.termination.no_docs_on_exit.ro" },
         { "id": "forced_resignation", "labelKey": "complaint.v.termination.forced_resignation", "sentenceKey": "complaint.v.termination.forced_resignation.ro" },
         { "id": "final_pay_missing", "labelKey": "complaint.v.termination.final_pay_missing", "sentenceKey": "complaint.v.termination.final_pay_missing.ro" }
       ],
-      "fields": [{ "id": "freeText", "type": "freetext", "required": false, "labelKey": "complaint.f.freeText" }],
+      "fields": [{ "id": "freeText", "type": "freetext", "required": false, "labelKey": "complaint.f.freeText", "hintKey": "complaint.f.freeText.hint.termination" }],
       "destinations": { "default": ["itm"] },
       "templateKey": "complaint.tpl.termination"
     },
@@ -262,12 +290,30 @@
       "requiresEmployer": false,
       "suggestedPartyIds": ["agency"],
       "violations": [
-        { "id": "illegal_fees", "labelKey": "complaint.v.agency.illegal_fees", "sentenceKey": "complaint.v.agency.illegal_fees.ro" },
+        { "id": "illegal_fees", "labelKey": "complaint.v.agency.illegal_fees", "sentenceKey": "complaint.v.agency.illegal_fees.ro",
+          "variants": [
+            { "field": "feePaidTo", "values": ["ro_agency"], "sentenceKey": "complaint.v.agency.illegal_fees.ro_agency.ro" },
+            { "field": "feePaidTo", "values": ["home_recruiter"], "sentenceKey": "complaint.v.agency.illegal_fees.home_recruiter.ro" },
+            { "field": "feePaidTo", "values": ["dont_know"], "sentenceKey": "complaint.v.agency.illegal_fees.dont_know.ro" }
+          ] },
         { "id": "different_conditions", "labelKey": "complaint.v.agency.different_conditions", "sentenceKey": "complaint.v.agency.different_conditions.ro" },
         { "id": "return_cost_refused", "labelKey": "complaint.v.agency.return_cost_refused", "sentenceKey": "complaint.v.agency.return_cost_refused.ro" }
       ],
       "fields": [
-        { "id": "freeText", "type": "freetext", "required": false, "labelKey": "complaint.f.freeText" }
+        {
+          "id": "feePaidTo",
+          "type": "select",
+          "required": false,
+          "labelKey": "complaint.f.feePaidTo",
+          "options": [
+            { "value": "ro_agency", "labelKey": "complaint.f.feePaidTo.ro_agency" },
+            { "value": "home_recruiter", "labelKey": "complaint.f.feePaidTo.home_recruiter" },
+            { "value": "dont_know", "labelKey": "complaint.f.feePaidTo.dont_know" }
+          ],
+          "visibleWhenViolationIds": ["illegal_fees"],
+          "requiredWhenViolationIds": ["illegal_fees"]
+        },
+        { "id": "freeText", "type": "freetext", "required": false, "labelKey": "complaint.f.freeText", "hintKey": "complaint.f.freeText.hint.agency" }
       ],
       "routingCountyFields": { "itm": "agencyCounty" },
       "destinations": { "default": ["itm"] },
@@ -279,7 +325,7 @@
       "requiresEmployer": false,
       "suggestedPartyIds": ["other"],
       "violations": [],
-      "fields": [{ "id": "freeText", "type": "freetext", "required": true, "labelKey": "complaint.f.freeText" }],
+      "fields": [{ "id": "freeText", "type": "freetext", "required": true, "labelKey": "complaint.f.freeText", "hintKey": "complaint.f.freeText.hint.other" }],
       "destinations": { "default": ["foundation"] },
       "templateKey": "complaint.tpl.other"
     }

@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, TextInput } from 'react-native';
 
 import { useComplaint } from '@/src/complaint/ComplaintProvider';
-import { FREE_TEXT_LIMIT, TRANSLATION_LIMIT, getCurrentTranslation, getGoogleTranslateUrl,
+import { FREE_TEXT_LIMIT, TRANSLATION_LIMIT, getCurrentTranslation, getGoogleTranslateLink,
   getNarrativeError, getNarrativeFields } from '@/src/complaint/freeText';
 import { AppButton } from '@/src/components/AppButton';
 import { AppScreen } from '@/src/components/AppScreen';
@@ -37,10 +37,12 @@ function NarrativeEditor({ field }: { field: ComplaintField }) {
   const romanian = draft.textLanguage === 'ro';
   const native = source ? isOnDeviceTranslationAvailable(source) : false;
   const manualVisible = !romanian && (manual || !native);
+  const googleLink = getGoogleTranslateLink(draft.textLanguage, original);
 
   return (
     <SectionCard>
       <AppText variant="subtitle">{t(field.labelKey)}</AppText>
+      {field.hintKey ? <AppText variant="caption">{t(field.hintKey)}</AppText> : null}
       <TextInput accessibilityLabel={t(field.labelKey)} multiline maxLength={FREE_TEXT_LIMIT}
         value={original} onChangeText={(value) => {
           request.current += 1;
@@ -80,13 +82,16 @@ function NarrativeEditor({ field }: { field: ComplaintField }) {
           {manualVisible ? <>
             <AppText>{t(native ? 'complaint.text.manualInstructions' : 'complaint.text.nativeUnavailable')}</AppText>
             <AppText>{t('complaint.text.googlePrivacy')}</AppText>
-            <AppButton variant="secondary" label={t('complaint.text.copy')} onPress={() => {
-              void Clipboard.setStringAsync(original).then(() => setCopied(true))
-                .catch(() => setError('complaint.text.copyError'));
-            }} />
-            {copied ? <AppText variant="caption">{t('complaint.text.copied')}</AppText> : null}
+            {!googleLink.includesText ? <>
+              <AppText>{t('complaint.text.linkTooLong')}</AppText>
+              <AppButton variant="secondary" label={t('complaint.text.copy')} onPress={() => {
+                void Clipboard.setStringAsync(original).then(() => setCopied(true))
+                  .catch(() => setError('complaint.text.copyError'));
+              }} />
+              {copied ? <AppText variant="caption">{t('complaint.text.copied')}</AppText> : null}
+            </> : null}
             <AppButton variant="secondary" label={t('complaint.text.openGoogle')} onPress={() => {
-              void Linking.openURL(getGoogleTranslateUrl(draft.textLanguage))
+              void Linking.openURL(googleLink.url)
                 .catch(() => setError('complaint.text.browserError'));
             }} />
             <AppText variant="label">{t('complaint.text.paste')}</AppText>

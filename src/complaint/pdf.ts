@@ -8,6 +8,7 @@ import { resolveComplaintRoute } from '@/src/complaint/routing';
 import type { ComplaintDraft, GeneratedComplaint } from '@/src/complaint/types';
 import {
   getActiveComplaintValues,
+  getCategoryWorkFields,
   getComplaintFieldError,
   getComplaintFields,
   getVisibleComplaintFields,
@@ -56,6 +57,50 @@ function interpolate(
     /\{\{?([a-zA-Z0-9_]+)\}?\}/g,
     (_match, key: string) => values[key]?.trim() || missingValue,
   );
+}
+
+function placeholderNames(template: string): string[] {
+  return [...template.matchAll(/\{\{?([a-zA-Z0-9_]+)\}?\}/g)]
+    .map((match) => match[1])
+    .filter((name): name is string => Boolean(name));
+}
+
+// Main sentence of each selected fact, followed by the optional fragments whose
+// field is filled (and matches the configured values). Returns the sentences and
+// the field ids they consumed, so the same data is not repeated in a table.
+function buildFactSentences(
+  category: ComplaintCategory,
+  draft: ComplaintDraft,
+  activeValues: Record<string, string>,
+  formattedValues: Record<string, string>,
+  ro: StringDictionary,
+  missingValue: string,
+): { facts: string[]; usedFieldIds: Set<string> } {
+  const usedFieldIds = new Set<string>();
+  const matches = (part: { field: string; values?: string[] }) => {
+    const value = activeValues[part.field]?.trim();
+    return Boolean(value) && !isUnknownValue(value!) && (!part.values || part.values.includes(value!));
+  };
+  const facts = category.violations
+    .filter(({ id }) => draft.selectedViolationIds.includes(id))
+    .map((violation) => {
+      const variant = violation.variants?.find(matches);
+      if (variant) usedFieldIds.add(variant.field);
+      const templates = [dictionaryText(ro, variant?.sentenceKey ?? violation.sentenceKey)];
+      for (const detail of violation.details ?? []) {
+        if (!matches(detail)) continue;
+        templates.push(dictionaryText(ro, detail.sentenceKey));
+        usedFieldIds.add(detail.field);
+      }
+      templates.forEach((template) => placeholderNames(template).forEach((name) => usedFieldIds.add(name)));
+      return templates
+        .map((template) => interpolate(template, formattedValues, missingValue))
+        .join(' ');
+    });
+  if (activeValues.contractCopy === 'no') {
+    facts.push(dictionaryText(ro, 'complaint.v.common.no_contract_copy.ro'));
+  }
+  return { facts, usedFieldIds };
 }
 
 function isPlaceholder(value: string | undefined): boolean {
@@ -189,13 +234,6 @@ function validateSelection(
       throw new Error(`Unknown complaint party: ${partyId}.`);
     }
   }
-
-  if (
-    draft.values.contractCopy === 'yes' &&
-    draft.selectedViolationIds.includes('no_contract_copy')
-  ) {
-    throw new Error('complaint.validation.contractCopyConflict');
-  }
 }
 
 function validateActiveFields(
@@ -274,11 +312,9 @@ export function buildComplaintHtml(args: {
     dictionaryText(ro, 'complaint.pdf.unspecified'),
   );
   const missingValue = dictionaryText(ro, 'complaint.pdf.unspecified');
-  const facts = category.violations
-    .filter(({ id }) => draft.selectedViolationIds.includes(id))
-    .map(({ sentenceKey }) =>
-      interpolate(dictionaryText(ro, sentenceKey), formattedValues, missingValue),
-    );
+  const { facts, usedFieldIds } = buildFactSentences(
+    category, draft, activeValues, formattedValues, ro, missingValue,
+  );
 
   const categoryTemplate = ro[category.templateKey];
   const requestText = isPlaceholder(categoryTemplate)
@@ -293,8 +329,12 @@ export function buildComplaintHtml(args: {
     .join(' ');
   const dateLabel = createdAt.toLocaleDateString('ro-RO');
   const commonFields = getVisibleComplaintFields(complaint.commonFields, activeValues);
-  const workFields = getVisibleComplaintFields(complaint.workFields, activeValues);
-  const factFields = getVisibleComplaintFields(category.fields, activeValues, draft.selectedViolationIds).filter((field) => field.type !== 'freetext');
+  // "No contract copy" is stated among the facts, so it is not repeated here.
+  const workFields = getVisibleComplaintFields(getCategoryWorkFields(complaint, category), activeValues)
+    .filter((field) => !(field.id === 'contractCopy' && activeValues.contractCopy === 'no'));
+  // Data already written into a fact sentence is not repeated in the table.
+  const factFields = getVisibleComplaintFields(category.fields, activeValues, draft.selectedViolationIds)
+    .filter((field) => field.type !== 'freetext' && !usedFieldIds.has(field.id));
   const partySections = draft.selectedPartyIds
     .map((partyId) => {
       const party = complaint.partyTypes.find(({ id }) => id === partyId);

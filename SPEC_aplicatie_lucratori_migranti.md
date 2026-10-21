@@ -408,3 +408,32 @@ build 2, a fost compilat în EAS la 2026-09-08 (ora României), inclusiv modulul
 Kotlin ML Kit. Compilarea Swift/iOS nu a fost efectuată. Descărcarea/offline
 ML Kit, fișierele și emailul trebuie în continuare verificate pe telefon.
 Faza 5 (Aptabase și verificările finale) nu este inclusă în această etapă.
+
+---
+
+## 12. Actualizare — 2026-10-09 (decizii Vadim)
+
+Are prioritate față de §11 acolo unde diferă:
+
+- **Doar Android.** Nu publicăm pe iOS.
+- **Google Translate se deschide cu textul precompletat** (`&text=` în URL),
+  după avertizarea că textul ajunge la Google. Peste 8.000 de caractere de URL
+  se deschide pagina goală și se folosește butonul de copiere. Înlocuiește
+  regula „fără text în URL” din §11.
+- **Frazele de fapt conțin doar fapte.** Încadrarea juridică („contrar legii”,
+  „prevăzut de lege” etc.) aparține modelului juridic al categoriei.
+- **Completări condiționate:** o faptă poate avea `details: [{ field, values?,
+  sentenceKey }]`; fragmentul se adaugă după fraza principală numai dacă
+  câmpul e completat (și, opțional, are una dintre valori). Fraza principală nu
+  conține date opționale. Datele folosite într-o frază nu se repetă în tabel.
+  `variants` (aceeași formă) înlocuiește fraza principală cu prima variantă
+  potrivită — ex. „Angajatorul îmi reține pașaportul…” după câmpul
+  `documentsHolder`; „Am plătit bani agenției din România…” după `feePaidTo`.
+- **Categorie ↔ situația muncii:** `employmentStatuses` restrânge opțiunile
+  (ex. încetare → doar „nu mai lucrez”, preselectat).
+- **Copia contractului se întreabă o singură dată** (ecranul despre muncă);
+  răspunsul „nu” apare automat la fapte. Bifa separată a fost eliminată.
+- **Puține câmpuri structurate:** unde textul liber e suficient, folosim text
+  liber cu indicații specifice categoriei (`hintKey` pe câmpul `freeText`).
+- Conținutul informativ din broșură și emailurile instituțiilor se completează
+  la final; până atunci rămân placeholder.

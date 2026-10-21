@@ -10,7 +10,7 @@ import { AppScreen } from '@/src/components/AppScreen';
 import { AppText } from '@/src/components/AppText';
 import { SectionCard } from '@/src/components/SectionCard';
 import {
-  findComplaintCategory, getComplaintContent, getComplaintFieldError, getVisibleComplaintFields,
+  findComplaintCategory, getCategoryWorkFields, getComplaintContent, getComplaintFieldError, getVisibleComplaintFields,
 } from '@/src/content/complaintContent';
 import { useContent } from '@/src/content/ContentProvider';
 import type { ComplaintField } from '@/src/types/content';
@@ -27,14 +27,13 @@ export default function ComplaintReviewScreen() {
 
   const sections: { title: string; route: Href; fields: ComplaintField[] }[] = [
     { title: t('complaint.identity.title'), route: '/complaint/identity', fields: complaint.commonFields },
-    { title: t('complaint.work.title'), route: '/complaint/status', fields: complaint.workFields },
+    { title: t('complaint.work.title'), route: '/complaint/status', fields: getCategoryWorkFields(complaint, category) },
     { title: t('complaint.details.title'), route: '/complaint/details', fields: category.fields.filter((field) => field.type !== 'freetext') },
     ...complaint.partyTypes.filter((party) => draft.selectedPartyIds.includes(party.id))
       .map((party) => ({ title: t(party.labelKey), route: '/complaint/employer' as Href, fields: party.fields })),
   ];
-  const copyConflict = draft.values.contractCopy === 'yes' && draft.selectedViolationIds.includes('no_contract_copy');
   const narrativeError = getNarrativeError(category, draft);
-  const valid = !copyConflict && !narrativeError && draft.selectedPartyIds.length > 0 &&
+  const valid = !narrativeError && draft.selectedPartyIds.length > 0 &&
     sections.every((section) => getVisibleComplaintFields(section.fields, draft.values, draft.selectedViolationIds)
       .every((field) => !getComplaintFieldError(field, draft.values, draft.selectedViolationIds)));
 
@@ -57,7 +56,6 @@ export default function ComplaintReviewScreen() {
       <Stack.Screen options={{ title: t('complaint.review.title') }} />
       <AppText variant="title">{t('complaint.review.title')}</AppText>
       <AppText>{t('complaint.review.description')}</AppText>
-      {copyConflict ? <AppText style={{ color: colors.danger }}>{t('complaint.validation.contractCopyConflict')}</AppText> : null}
       <SectionCard>
         <AppText variant="subtitle">{t(category.labelKey)}</AppText>
         {category.violations.filter((violation) => draft.selectedViolationIds.includes(violation.id))

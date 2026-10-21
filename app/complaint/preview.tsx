@@ -1,4 +1,4 @@
-import { CommonActions } from '@react-navigation/native';
+import { CommonActions } from 'expo-router/react-navigation';
 import * as MailComposer from 'expo-mail-composer';
 import { Redirect, Stack, useNavigation, useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';

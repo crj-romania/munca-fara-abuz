@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "contentVersion": "2026-09-08.2",
+  "contentVersion": "2026-10-09.1",
   "legalUpdatedAt": "2026-08-05",
   "languages": [
     { "code": "en", "name": "English", "rtl": false, "mt": "mlkit:en" },
