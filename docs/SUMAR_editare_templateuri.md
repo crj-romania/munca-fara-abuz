@@ -87,7 +87,7 @@ Rezultatele verificărilor executate la predare:
 - `src/components/ComplaintFieldsStep.tsx`, `app/complaint/review.tsx`, `src/complaint/freeText.ts`, `src/complaint/pdf.ts`: integrarea condițiilor în flux și document.
 - `src/complaint/routing.ts`: alegerea destinatarului; `content/institutions.json`: datele instituțiilor.
 - `scripts/check-complaint-flow.mjs`: regresii ale formularului și ale PDF-ului, inclusiv rularea pe JSON-ul real.
-- `SPEC_aplicatie_lucratori_migranti.md`: specificația de bază; `DRAFT_categorii_plangeri.md`: schița de conținut. Deciziile ulterioare explicite ale utilizatorului trebuie păstrate și reflectate coerent în documentație.
+- `docs/SPEC_aplicatie_lucratori_migranti.md`: specificația de bază; `docs/DRAFT_categorii_plangeri.md`: schița de conținut. Deciziile ulterioare explicite ale utilizatorului trebuie păstrate și reflectate coerent în documentație.
 
 **Atenție la activarea template-urilor:** codul actual deduce starea DRAFT din textul placeholder-ului, nu dintr-un flux separat de aprobare juridică. Înlocuirea placeholder-ului cu text obișnuit poate face modelul eligibil pentru email dacă ruta este validă. Nu echivala o primă redactare cu aprobarea juridică.
 

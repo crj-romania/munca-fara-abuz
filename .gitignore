@@ -15,3 +15,6 @@ tmp/
 
 expo-env.d.ts
 # @end expo-cli
+
+# Source documents kept next to the project (e.g. the CRJ brochure), not in git
+/*.pdf

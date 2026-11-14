@@ -1,0 +1,13 @@
+# Line endings: LF in the repository for every text file, whatever the editor
+# uses on Windows. Binary files are never converted.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.ttf binary
+*.otf binary
+*.pdf binary
+*.jar binary
+*.keystore binary

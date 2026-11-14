@@ -165,7 +165,6 @@ Cardul de informație afișează: dreptul (scurt), pașii concreți, instituția
     { "id": "employerName",    "type": "text",   "required": true,  "labelKey": "complaint.f.employerName", "hintKey": "complaint.f.employerName.hint" },
     { "id": "employerCounty",  "type": "county", "required": true,  "labelKey": "complaint.f.employerCounty" },
     { "id": "employerAddress", "type": "text",   "required": false, "labelKey": "complaint.f.employerAddress" },
-    { "id": "employerRegCom",  "type": "text",   "required": false, "labelKey": "complaint.f.employerRegCom" },
     { "id": "employerCui",     "type": "text",   "required": false, "labelKey": "complaint.f.employerCui" }
   ],
   "categories": [
@@ -437,3 +436,43 @@ Are prioritate față de §11 acolo unde diferă:
   liber cu indicații specifice categoriei (`hintKey` pe câmpul `freeText`).
 - Conținutul informativ din broșură și emailurile instituțiilor se completează
   la final; până atunci rămân placeholder.
+
+---
+
+## 12. Actualizare de implementare — 2026-11-02 (observații colegă)
+
+Are prioritate față de secțiunile anterioare incompatibile:
+
+- **Ordinea formularului:** categorie → fapte („Ce s-a întâmplat?”) → detalii →
+  text liber → date personale → muncă → persoane implicate → atașamente →
+  verificare. Ecranul de verificare urmează aceeași ordine. PDF-ul își
+  păstrează structura (petent, muncă, fapte, părți).
+- **Situația muncii:** a patra opțiune `unknown` — „Nu știu dacă mai sunt
+  angajat acolo”. Este permisă la salariu, program și încetare (încetarea nu
+  mai preselectează „nu mai lucrez”). În PDF apare eticheta opțiunii, nu „Nu
+  știu” generic.
+- **Părți implicate:** numărul de la Registrul Comerțului a fost eliminat;
+  rămâne doar CUI, cu buton (i) (`infoKey`) care explică unde se găsește.
+- **Încetare:** fapte noi `ended_without_consent` și `nothing_signed`; hint-ul
+  textului liber întreabă și cum/când a aflat lucrătorul de încetare.
+- **Urgență:** linia ANITP este marcată ca nefuncțională non-stop (operator în
+  zilele lucrătoare, până la 16:00) — de confirmat programul exact.
+- **Atașamente:** vezi README (20 de fișiere, cameră, galerie, compresie).
+- **Limbi:** en, ro, ne, hi, bn, si, ta, ur, ar, tl, vi — traduceri reale (automate, de
+  verificat de vorbitori nativi). Textele care apar doar în PDF (fraze `.ro`,
+  `complaint.pdf.*`, șabloane) și placeholder-ele de informații rămân în engleză în
+  celelalte limbi, pentru că nu se afișează. `scripts/generate-test-locales.mjs` e retras.
+- **Mod de test:** cât timp șablonul juridic al categoriei e provizoriu, emailul merge
+  doar la `institutions.json → testRecipient`; subiectul are prefixul `[TEST]`, iar
+  emailul și PDF-ul spun destinatarul real (instituție + email) sau că nu a putut fi
+  stabilit. Un șablon validat trece categoria automat în producție.
+- **„Șterge tot”:** în Setări și în „Documentele mele”; șterge PDF-urile, anexele,
+  ciorna din memorie și toate folderele temporare (picker, cameră, compresie, print).
+- **Statistici (Aptabase, EU):** doar după „Da” (întrebare unică pe Home, comutator în
+  Setări); cheie în `EXPO_PUBLIC_APTABASE_APP_KEY`; fără cheie validă funcția nu apare.
+  Evenimente: `app_open`, `language_selected`, `info_item_viewed`, `complaint_started`,
+  `complaint_generated {action, mode}`, `mt_used`, `emergency_opened`, `emergency_call`,
+  `contact_opened`, `data_deleted`. Niciodată valori din formular sau text liber.
+- **Politica de confidențialitate:** `content/privacy/index.html` (RO + EN), publicată
+  împreună cu conținutul; Setări deschide `<CONTENT_BASE_URL>/privacy/`.
+

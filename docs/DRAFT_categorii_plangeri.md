@@ -6,7 +6,7 @@ Placeholder-ele `{...}` se completează din câmpurile formularului. Etichetele 
 
 ---
 
-## 1. `unpaid_wages` — My pay is missing or wrong
+## 1. `unpaid_wages` — My salary is missing or wrong
 
 Angajator: da. Destinatar draft: **ITM** (județ angajator).
 
@@ -45,6 +45,8 @@ Angajator: da. Destinatar draft: **ITM**.
 
 | id | EN draft | RO draft |
 |---|---|---|
+| ended_without_consent | It was ended without my knowledge or agreement | Contractul meu de muncă a încetat fără știrea și fără acordul meu. |
+| nothing_signed | I never signed any paper to end it | Nu am semnat niciun document privind încetarea contractului meu de muncă (de exemplu, o demisie sau un acord de încetare). |
 | no_docs_on_exit | I got no papers when it ended | La încetarea contractului nu mi s-au eliberat documentele prevăzute de lege. |
 | forced_resignation | I was pushed to resign | Am fost presat să semnez o cerere de demisie împotriva voinței mele. |
 | final_pay_missing | I was not paid what was owed | La încetarea contractului nu mi-au fost plătite drepturile salariale restante. |

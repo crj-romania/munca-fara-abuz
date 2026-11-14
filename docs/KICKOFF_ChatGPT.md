@@ -29,8 +29,8 @@ Decizii de lucru deja luate (nu le rediscuta):
 ## B. Ordinea documentelor date lui ChatGPT
 
 1. Promptul de mai sus
-2. `SPEC_aplicatie_lucratori_migranti.md` (integral)
-3. `DRAFT_categorii_plangeri.md` (integral)
+2. `docs/SPEC_aplicatie_lucratori_migranti.md` (integral)
+3. `docs/DRAFT_categorii_plangeri.md` (integral)
 
 La fiecare sesiune nouă de ChatGPT: re-dă SPEC-ul + promptul + codul curent (sau folosește un Project ca să rămână atașate).
 
