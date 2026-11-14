@@ -15,14 +15,31 @@ const textScreen = read('app/complaint/text.tsx');
 assert.match(textScreen, /getNarrativeError/);
 assert.match(textScreen, /Clipboard\.setStringAsync\(original\)/);
 assert.doesNotMatch(textScreen, /Clipboard\.getString|console\.(log|error|warn)|https?:\/\/[^'" ]*text=/);
-assert.match(textScreen, /router\.navigate\('\/complaint\/employer'\)/);
+// What happened is asked before personal data: text → identity → status → parties.
+assert.match(textScreen, /router\.navigate\('\/complaint\/identity'\)/);
+assert.match(read('app/complaint/index.tsx'), /'\/complaint\/violations' : '\/complaint\/details'/);
+assert.doesNotMatch(read('app/complaint/index.tsx'), /\/complaint\/identity/);
+assert.match(read('app/complaint/identity.tsx'), /\/complaint\/status/);
+assert.match(read('app/complaint/status.tsx'), /\/complaint\/employer/);
 assert.match(read('app/complaint/employer.tsx'), /\/complaint\/attachments/);
 assert.match(read('app/complaint/attachments.tsx'), /\/complaint\/review/);
 const preview = read('app/complaint/preview.tsx');
 assert.match(preview, /assertComplaintFilesAvailable\(generated\.uri, generated\.attachments\)/);
 assert.match(preview, /attachments: \[generated\.uri, \.\.\.generated\.attachments\.map/);
-assert.match(preview, /!generated\.templateReady/);
+assert.match(preview, /generated\.testMode/);
+assert.doesNotMatch(preview, /!generated\.templateReady/, 'Provisional templates no longer block email; they use the test address.');
 assert.match(read('src/content/ContentProvider.tsx'), /deletePreviousTranslationModel/);
+// Statistics: opt-in only, fixed event names, never form values or free text.
+const analyticsSource = read('src/analytics/analytics.ts');
+assert.match(analyticsSource, /consent !== 'granted'/);
+assert.doesNotMatch(analyticsSource, /from '@\/src\/complaint/, 'Statistics must not import complaint data.');
+const trackedFiles = ['app/_layout.tsx', 'app/complaint/index.tsx', 'app/complaint/preview.tsx', 'app/complaint/text.tsx',
+  'app/emergency.tsx', 'app/contact.tsx', 'app/info/[...path].tsx', 'src/components/LanguageGrid.tsx', 'src/components/DeleteAllData.tsx'];
+for (const file of trackedFiles) {
+  for (const [, call] of read(file).matchAll(/track\(([^;]*?)\);/gs)) {
+    assert.doesNotMatch(call, /draft\.values|values\[|freeText|\.original|\.translated|lastName|firstName|idNumber|\.email\b|phone/i, `${file}: ${call}`);
+  }
+}
 assert.match(read('src/complaint/pdfFonts.ts'), /data:font\/ttf;base64/);
 assert.doesNotMatch(read('src/complaint/pdfFonts.ts'), /https?:\/\//);
 const dictionaries = ['en', 'ro', 'ne', 'ur'].map((code) => JSON.parse(read(`content/${code}/strings.json`)));

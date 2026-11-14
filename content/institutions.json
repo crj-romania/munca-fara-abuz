@@ -1,4 +1,5 @@
 {
+  "testRecipient": "<TEST_EMAIL_PLACEHOLDER>",
   "institutions": [
     {
       "id": "itm",

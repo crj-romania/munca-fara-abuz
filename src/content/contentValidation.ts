@@ -181,7 +181,11 @@ function validateInstitutionsContent(value: unknown): InstitutionsContent {
       ...(whatsapp ? { whatsapp } : {}),
     } as Institution;
   });
-  return { institutions };
+  const testRecipient = value.testRecipient;
+  if (testRecipient !== undefined && typeof testRecipient !== 'string') {
+    throw new Error('institutions.testRecipient must be a string.');
+  }
+  return { institutions, ...(testRecipient ? { testRecipient } : {}) };
 }
 
 // ---------------------------------------------------------------------------
@@ -191,7 +195,7 @@ function validateInstitutionsContent(value: unknown): InstitutionsContent {
 // ---------------------------------------------------------------------------
 
 const FIELD_TYPES = ['text', 'date', 'monthYear', 'select', 'county', 'freetext'];
-const EMPLOYMENT_OPTIONS = ['working', 'stopped', 'not_started'];
+const EMPLOYMENT_OPTIONS = ['working', 'stopped', 'not_started', 'unknown'];
 
 function requireUniqueNonEmpty(values: string[], context: string): string[] {
   if (values.length === 0 || new Set(values).size !== values.length) {
@@ -236,6 +240,10 @@ function validateComplaintField(value: unknown, context: string): ComplaintField
   const hintKey = value.hintKey;
   if (hintKey !== undefined && typeof hintKey !== 'string') {
     throw new Error(`${context}.hintKey must be a string.`);
+  }
+  const infoKey = value.infoKey;
+  if (infoKey !== undefined && (typeof infoKey !== 'string' || infoKey.length === 0)) {
+    throw new Error(`${context}.infoKey must be a non-empty string.`);
   }
   const visibleWhen = value.visibleWhen === undefined
     ? undefined
@@ -314,6 +322,7 @@ function validateComplaintField(value: unknown, context: string): ComplaintField
     required: value.required,
     labelKey: requireString(value, 'labelKey', context),
     ...(hintKey ? { hintKey } : {}),
+    ...(infoKey ? { infoKey } : {}),
     ...(options ? { options } : {}),
     ...(visibleWhen ? { visibleWhen } : {}),
     ...(requiredWhen ? { requiredWhen } : {}),
@@ -421,7 +430,7 @@ function validateComplaintCategory(
     `${context}.employmentStatuses`,
   );
   if (employmentStatuses?.some((status) => !EMPLOYMENT_OPTIONS.includes(status))) {
-    throw new Error(`${context}.employmentStatuses must use working, stopped, or not_started.`);
+    throw new Error(`${context}.employmentStatuses must use working, stopped, not_started, or unknown.`);
   }
   for (const partyId of suggestedPartyIds) {
     if (!partyIds.has(partyId)) {
@@ -603,7 +612,7 @@ function validateComplaintContent(value: unknown): ComplaintContent {
     'complaint.statusQuestions.employment',
   );
   if (JSON.stringify(employment.options) !== JSON.stringify(EMPLOYMENT_OPTIONS)) {
-    throw new Error('complaint.statusQuestions.employment.options must be working, stopped, and not_started.');
+    throw new Error('complaint.statusQuestions.employment.options must be working, stopped, not_started, and unknown.');
   }
   const commonFields = validateComplaintFields(value.commonFields, 'complaint.commonFields');
   const workFields = validateComplaintFields(value.workFields, 'complaint.workFields');
@@ -619,7 +628,7 @@ function validateComplaintContent(value: unknown): ComplaintContent {
     JSON.stringify(employmentStatus.options?.map(({ value: option }) => option)) !==
       JSON.stringify(EMPLOYMENT_OPTIONS)
   ) {
-    throw new Error('complaint.workFields.employmentStatus must be a required select with working, stopped, and not_started options.');
+    throw new Error('complaint.workFields.employmentStatus must be a required select with working, stopped, not_started, and unknown options.');
   }
 
   const categoryIds = new Set<string>();

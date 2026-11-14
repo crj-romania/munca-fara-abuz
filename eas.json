@@ -9,6 +9,9 @@
       "distribution": "internal",
       "android": {
         "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_APP_ENV": "development"
       }
     },
     "preview": {
@@ -18,7 +21,21 @@
         "autoIncrement": "versionCode"
       },
       "env": {
-        "EXPO_PUBLIC_CONTENT_BASE_URL": "https://vadim-chiriac.github.io/migratie"
+        "EXPO_PUBLIC_APP_ENV": "preview",
+        "EXPO_PUBLIC_CONTENT_BASE_URL": "https://vadim-chiriac.github.io/migratie",
+        "EXPO_PUBLIC_APTABASE_APP_KEY": "<APTABASE_APP_KEY>",
+        "EXPO_PUBLIC_FEEDBACK_URL": "<FEEDBACK_URL>"
+      }
+    },
+    "production": {
+      "android": {
+        "buildType": "app-bundle",
+        "autoIncrement": "versionCode"
+      },
+      "env": {
+        "EXPO_PUBLIC_APP_ENV": "production",
+        "EXPO_PUBLIC_CONTENT_BASE_URL": "https://vadim-chiriac.github.io/migratie",
+        "EXPO_PUBLIC_APTABASE_APP_KEY": "<APTABASE_APP_KEY>"
       }
     }
   }

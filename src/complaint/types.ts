@@ -41,6 +41,10 @@ export type GeneratedComplaint = {
   emailSubject: string;
   emailBody: string;
   templateReady: boolean;
+  // Provisional template: `recipients` holds only the test address, and
+  // `intendedRecipients` the authority addresses the complaint would reach.
+  testMode: boolean;
+  intendedRecipients: string[];
   createdAt: string;
   attachments: ComplaintAttachment[];
 };

@@ -12,7 +12,7 @@ type AttachmentListProps = {
   onRemove?: (attachment: ComplaintAttachment) => void;
 };
 
-function formatSize(size: number): string {
+export function formatAttachmentSize(size: number): string {
   if (size < 1024 * 1024) {
     return `${Math.max(1, Math.round(size / 1024))} KB`;
   }
@@ -37,7 +37,7 @@ export function AttachmentList({
         <SectionCard key={attachment.id}>
           <AppText variant="label">{attachment.name}</AppText>
           <AppText variant="caption">
-            {attachment.mimeType} · {formatSize(attachment.size)}
+            {attachment.mimeType} · {formatAttachmentSize(attachment.size)}
           </AppText>
           {onOpen ? (
             <AppButton

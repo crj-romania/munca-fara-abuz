@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { TestBanner } from '@/src/components/TestBanner';
 import { useContent } from '@/src/content/ContentProvider';
 import { colors } from '@/src/theme/colors';
 import { spacing } from '@/src/theme/spacing';
@@ -39,6 +40,7 @@ export function AppScreen({
             contentStyle,
           ]}
         >
+          <TestBanner />
           {children}
         </View>
       </ScrollView>

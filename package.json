@@ -13,9 +13,11 @@
     "check:phase1": "npm run typecheck && npm run check:content",
     "check:phase2": "npm run check:phase1 && node scripts/check-phase2.mjs",
     "check:phase3": "npm run check:phase2 && node scripts/check-phase3.mjs && node scripts/check-complaint-flow.mjs",
-    "check:phase4": "npm run check:phase3 && node scripts/check-phase4.mjs && node scripts/check-translation-engine.mjs && node scripts/check-attachments.mjs"
+    "check:phase4": "npm run check:phase3 && node scripts/check-phase4.mjs && node scripts/check-translation-engine.mjs && node scripts/check-attachments.mjs && npm run check:translations",
+    "check:translations": "node scripts/check-translations.mjs"
   },
   "dependencies": {
+    "@aptabase/react-native": "0.6.0",
     "@expo-google-fonts/noto-sans": "0.4.2",
     "@expo-google-fonts/noto-sans-arabic": "0.4.3",
     "@expo-google-fonts/noto-sans-bengali": "0.4.4",
@@ -34,6 +36,8 @@
     "expo-document-picker": "~57.0.3",
     "expo-file-system": "~57.0.7",
     "expo-font": "~57.0.4",
+    "expo-image-manipulator": "~57.0.21",
+    "expo-image-picker": "~57.0.20",
     "expo-intent-launcher": "~57.0.1",
     "expo-linking": "~57.0.12",
     "expo-mail-composer": "~57.0.2",

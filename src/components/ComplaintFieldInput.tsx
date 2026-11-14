@@ -42,6 +42,7 @@ export function ComplaintFieldInput({
   const { t } = useTranslation();
   const { currentLanguage } = useContent();
   const [modalVisible, setModalVisible] = useState(false);
+  const [infoVisible, setInfoVisible] = useState(false);
   const choices = useMemo<Choice[]>(() => {
     if (field.type === 'county') {
       const counties = ROMANIAN_COUNTIES.map(({ code, name }) => ({
@@ -62,10 +63,33 @@ export function ComplaintFieldInput({
 
   return (
     <View style={styles.field}>
-      <AppText variant="label">
-        {t(field.labelKey)}
-        {field.required ? ' *' : ''}
-      </AppText>
+      <View style={[styles.labelRow, { flexDirection: currentLanguage.rtl ? 'row-reverse' : 'row' }]}>
+        <AppText style={styles.label} variant="label">
+          {t(field.labelKey)}
+          {field.required ? ' *' : ''}
+        </AppText>
+        {field.infoKey ? (
+          <Pressable
+            accessibilityLabel={t('complaint.form.moreInfo')}
+            accessibilityRole="button"
+            accessibilityState={{ expanded: infoVisible }}
+            hitSlop={12}
+            onPress={() => setInfoVisible((visible) => !visible)}
+            style={({ pressed }) => (pressed ? styles.pressed : undefined)}
+          >
+            <Ionicons
+              color={colors.primary}
+              name={infoVisible ? 'information-circle' : 'information-circle-outline'}
+              size={26}
+            />
+          </Pressable>
+        ) : null}
+      </View>
+      {field.infoKey && infoVisible ? (
+        <View style={styles.info}>
+          <AppText>{t(field.infoKey)}</AppText>
+        </View>
+      ) : null}
       {field.hintKey ? (
         <AppText style={styles.hint} variant="caption">
           {t(field.hintKey)}
@@ -178,6 +202,21 @@ export function ComplaintFieldInput({
 const styles = StyleSheet.create({
   field: {
     gap: spacing.sm,
+  },
+  labelRow: {
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  label: {
+    flexShrink: 1,
+  },
+  // A callout, deliberately unlike an input box.
+  info: {
+    padding: spacing.md,
+    borderLeftWidth: 4,
+    borderLeftColor: colors.primary,
+    borderRadius: 8,
+    backgroundColor: '#E6EEF5',
   },
   hint: {
     color: colors.muted,

@@ -209,7 +209,8 @@ await readText('scripts/check-complaint-flow.mjs');
 const previewSource = await readText('app/complaint/preview.tsx');
 assert(previewSource.includes('MailComposer.composeAsync'), 'Mail composer is missing.');
 assert(previewSource.includes('attachments: [generated.uri,'), 'Email does not attach the PDF and companion files.');
-assert(previewSource.includes('!generated.templateReady'), 'Unvalidated legal templates do not block email.');
+assert(previewSource.includes('generated.testMode'), 'Provisional templates must be sent in test mode only.');
+assert(pdfSource.includes('const testMode = isDraftTemplate;'), 'A provisional template must switch the complaint to test mode.');
 assert(previewSource.includes('shareComplaintDocument'), 'Share sheet action is missing.');
 
 const providerSource = await readText('src/complaint/ComplaintProvider.tsx');
@@ -243,5 +244,5 @@ console.log(
   `Phase 3 OK: ${phase3CategoryCount} predefined complaint categories, ${expectedCountyCodes.length} ITM routes, PDF/email/share/local documents wired.`,
 );
 console.log(
-  `Content readiness: ${draftTemplateCount} legal templates remain draft; email is intentionally disabled for those categories.`,
+  `Content readiness: ${draftTemplateCount} legal templates remain draft; their complaints go only to the test address (test mode).`,
 );

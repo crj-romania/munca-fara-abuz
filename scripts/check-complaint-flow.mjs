@@ -337,19 +337,36 @@ assert.equal(onlyPartial.match(/1500/g)?.length, 1);
 assert.equal(onlyPartial.match(/PERIOD-PARTIAL/g)?.length, 1);
 assert.match(onlyPartial, /Suma neplătită este de aproximativ 1500 lei\./);
 
-// Category ↔ work situation: termination only allows "stopped" and preselects it.
+// Category ↔ work situation: termination allows "stopped" or "I don't know if I
+// am still employed"; a single allowed status would be preselected.
 const terminationCategory = actualComplaint.categories.find((item) => item.id === 'termination');
-assertSameData(contentHelpers.getInitialCategoryValues(terminationCategory), { employmentStatus: 'stopped' });
+assertSameData(contentHelpers.getInitialCategoryValues(terminationCategory), {});
+assertSameData(contentHelpers.getInitialCategoryValues({ ...terminationCategory, employmentStatuses: ['stopped'] }),
+  { employmentStatus: 'stopped' });
 assertSameData(contentHelpers.getInitialCategoryValues(actualCategory), {});
 const terminationStatus = contentHelpers.getCategoryWorkFields(actualComplaint, terminationCategory)
   .find((item) => item.id === 'employmentStatus');
-assertSameData(terminationStatus.options.map(({ value }) => value), ['stopped']);
+assertSameData(terminationStatus.options.map(({ value }) => value), ['stopped', 'unknown']);
 const terminationBase = { ...salaryValues, workEnd: '2025-06' };
-const renderTermination = (values) => pdf.buildComplaintHtml({ complaint: actualComplaint, category: terminationCategory,
-  institutions: actualInstitutions, ro: actualRo,
-  draft: baseDraft({ categoryId: 'termination', selectedViolationIds: ['final_pay_missing'], values }) }).html;
+const renderTermination = (values, selectedViolationIds = ['final_pay_missing']) => pdf.buildComplaintHtml({
+  complaint: actualComplaint, category: terminationCategory, institutions: actualInstitutions, ro: actualRo,
+  draft: baseDraft({ categoryId: 'termination', selectedViolationIds, values }) }).html;
 renderTermination({ ...terminationBase, employmentStatus: 'stopped' });
 expectThrows(() => renderTermination({ ...terminationBase, employmentStatus: 'working' }), 'employmentStatus');
+// "Unknown" status: no end date is asked, and the PDF states the option itself.
+const unknownStatusHtml = renderTermination({ ...salaryValues, employmentStatus: 'unknown', workEnd: '' },
+  ['ended_without_consent', 'nothing_signed']);
+assert.match(unknownStatusHtml, /Nu știu dacă mai sunt angajat acolo/);
+assert.match(unknownStatusHtml, /Contractul meu de muncă a încetat fără știrea și fără acordul meu\./);
+assert.match(unknownStatusHtml, /Nu am semnat niciun document privind încetarea contractului meu de muncă/);
+assert.match(unknownStatusHtml, /Luna și anul începerii muncii/);
+assert.doesNotMatch(unknownStatusHtml, /Luna și anul încetării muncii/);
+// Only the CUI identifies a company; the trade register number is gone.
+assert.equal(actualComplaint.partyTypes.some(({ fields }) => fields.some(({ id }) => /RegCom/.test(id))), false);
+for (const party of ['employer', 'agency']) {
+  const cui = actualComplaint.partyTypes.find(({ id }) => id === party).fields.find(({ id }) => /Cui$/.test(id));
+  assert.equal(cui.infoKey, 'complaint.f.cui.info', `${party} CUI needs the (i) explanation.`);
+}
 assert.equal(actualComplaint.categories.some((item) => item.violations.some(({ id }) => id === 'no_contract_copy')), false);
 
 // Fact sentences state facts only; legal qualification belongs to the templates.
@@ -458,6 +475,36 @@ const otherResult = pdf.buildComplaintHtml({ complaint: actualComplaint, categor
   institutions: validatedBundle.documents[bundledIndex.files.institutions], ro: actualRo });
 assertSameData(otherResult.recipients, []); // Do not guess an authority or email the foundation.
 assert.equal(otherResult.templateReady, false);
+assert.equal(otherResult.testMode, true);
+assertSameData(otherResult.intendedRecipients, []);
+
+// Test mode: a provisional template is emailed only to the test address, and the
+// PDF/email state the real territorial recipient (or that none was found).
+const testInstitutions = { ...validatedBundle.documents[bundledIndex.files.institutions], testRecipient: 'test@example.test' };
+const testMode = pdf.buildComplaintHtml({ complaint: actualComplaint, category: actualCategory, institutions: testInstitutions,
+  ro: actualRo, draft: baseDraft({ categoryId: 'unpaid_wages', selectedViolationIds: ['no_payslip'], values: { ...salaryValues, employerCounty: 'AB' } }) });
+assert.equal(testMode.testMode, true);
+assertSameData(testMode.recipients, ['test@example.test']);
+assertSameData(testMode.intendedRecipients, ['itmalba@itmalba.ro']);
+assert.match(testMode.subject, /^\[TEST\] /);
+assert.match(testMode.emailBody, /Destinatar real: Inspectoratul Teritorial de Muncă – Alba\. Email real: itmalba@itmalba\.ro\./);
+assert.match(testMode.html, /Email real: itmalba@itmalba\.ro/);
+const unknownCountyTest = pdf.buildComplaintHtml({ complaint: actualComplaint, category: actualCategory, institutions: testInstitutions,
+  ro: actualRo, draft: baseDraft({ categoryId: 'unpaid_wages', selectedViolationIds: ['no_payslip'], values: { ...salaryValues, employerCounty: 'unknown' } }) });
+assertSameData(unknownCountyTest.recipients, ['test@example.test']);
+assert.match(unknownCountyTest.emailBody, /Email real: nicio adresă/);
+// A placeholder test address never falls back to the authority.
+const placeholderTest = pdf.buildComplaintHtml({ complaint: actualComplaint, category: actualCategory,
+  institutions: { ...testInstitutions, testRecipient: '<TEST_EMAIL_PLACEHOLDER>' }, ro: actualRo,
+  draft: baseDraft({ categoryId: 'unpaid_wages', selectedViolationIds: ['no_payslip'], values: { ...salaryValues, employerCounty: 'AB' } }) });
+assertSameData(placeholderTest.recipients, []);
+// A validated template sends to the authority, without any test marking.
+const liveRo = { ...actualRo, [actualCategory.templateKey]: 'Solicit verificarea situației.' };
+const live = pdf.buildComplaintHtml({ complaint: actualComplaint, category: actualCategory, institutions: testInstitutions, ro: liveRo,
+  draft: baseDraft({ categoryId: 'unpaid_wages', selectedViolationIds: ['no_payslip'], values: { ...salaryValues, employerCounty: 'AB' } }) });
+assert.equal(live.testMode, false);
+assertSameData(live.recipients, ['itmalba@itmalba.ro']);
+assert.doesNotMatch(live.subject + live.emailBody + live.html, /TEST|Destinatar real/);
 // Google Translate opens prefilled; too-long texts fall back to copy/paste.
 const prefilled = freeText.getGoogleTranslateLink('ne', '  मेरो तलब & <b>  ');
 const url = new URL(prefilled.url);

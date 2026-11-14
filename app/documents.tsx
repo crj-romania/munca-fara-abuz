@@ -16,6 +16,7 @@ import { AttachmentList } from '@/src/components/AttachmentList';
 import { AppButton } from '@/src/components/AppButton';
 import { AppScreen } from '@/src/components/AppScreen';
 import { AppText } from '@/src/components/AppText';
+import { DeleteAllData } from '@/src/components/DeleteAllData';
 import { SectionCard } from '@/src/components/SectionCard';
 import { colors } from '@/src/theme/colors';
 
@@ -50,6 +51,7 @@ export default function DocumentsScreen() {
       <SectionCard>
         <AppText>{t('documents.localOnly')}</AppText>
       </SectionCard>
+      {!loading && documents.length > 0 ? <DeleteAllData onDeleted={() => void reload()} /> : null}
       {loading ? <AppText>{t('common.loading')}</AppText> : null}
       {!loading && documents.length === 0 ? (
         <AppText>{t('documents.empty')}</AppText>

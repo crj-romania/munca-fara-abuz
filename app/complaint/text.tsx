@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, TextInput } from 'react-native';
 
+import { track } from '@/src/analytics/analytics';
 import { useComplaint } from '@/src/complaint/ComplaintProvider';
 import { FREE_TEXT_LIMIT, TRANSLATION_LIMIT, getCurrentTranslation, getGoogleTranslateLink,
   getNarrativeError, getNarrativeFields } from '@/src/complaint/freeText';
@@ -69,6 +70,7 @@ function NarrativeEditor({ field }: { field: ComplaintField }) {
             }).then((translated) => {
               if (requestId !== request.current) return;
               setTranslation(field.id, { original: snapshot.original, sourceLanguage: snapshot.sourceLanguage, translated, engine: 'mlkit' }, snapshot.draftId);
+              track('mt_used', { engine: 'mlkit' });
             }).catch(() => {
               if (requestId === request.current) { setError('complaint.text.nativeError'); setManual(true); }
             }).finally(() => { if (requestId === request.current) setBusy(false); });
@@ -91,6 +93,7 @@ function NarrativeEditor({ field }: { field: ComplaintField }) {
               {copied ? <AppText variant="caption">{t('complaint.text.copied')}</AppText> : null}
             </> : null}
             <AppButton variant="secondary" label={t('complaint.text.openGoogle')} onPress={() => {
+              track('mt_used', { engine: 'manual' });
               void Linking.openURL(googleLink.url)
                 .catch(() => setError('complaint.text.browserError'));
             }} />
@@ -142,7 +145,7 @@ export default function ComplaintTextScreen() {
       {showErrors && error ? <AppText style={{ color: colors.danger }}>{t(error)}</AppText> : null}
       <AppButton label={t('common.continue')} onPress={() => {
         if (error) { setShowErrors(true); return; }
-        router.navigate('/complaint/employer');
+        router.navigate('/complaint/identity');
       }} />
     </AppScreen>
   );

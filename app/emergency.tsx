@@ -1,6 +1,9 @@
 import * as Linking from 'expo-linking';
 import { Stack } from 'expo-router';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+
+import { track } from '@/src/analytics/analytics';
 
 import { AppButton } from '@/src/components/AppButton';
 import { AppScreen } from '@/src/components/AppScreen';
@@ -23,6 +26,7 @@ export default function EmergencyScreen() {
   const { t } = useTranslation();
   const { content } = useContent();
   const emergency = getEmergencyContent(content);
+  useEffect(() => { track('emergency_opened'); }, []);
 
   return (
     <AppScreen>
@@ -45,6 +49,7 @@ export default function EmergencyScreen() {
               }
               onPress={() => {
                 if (!unavailable) {
+                  track('emergency_call', { contactId: contact.id });
                   void Linking.openURL(contactUrl(contact.action, contact.value));
                 }
               }}

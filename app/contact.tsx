@@ -1,6 +1,9 @@
 import * as Linking from 'expo-linking';
 import { Stack } from 'expo-router';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+
+import { track } from '@/src/analytics/analytics';
 
 import { AppButton } from '@/src/components/AppButton';
 import { AppScreen } from '@/src/components/AppScreen';
@@ -21,6 +24,7 @@ export default function ContactScreen() {
   const email = foundation?.emails['*'];
   const whatsappUnavailable = isPlaceholderValue(whatsapp);
   const emailUnavailable = isPlaceholderValue(email);
+  useEffect(() => { track('contact_opened'); }, []);
 
   return (
     <AppScreen>

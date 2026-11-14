@@ -23,6 +23,14 @@
       "expo-mail-composer",
       "expo-asset",
       [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app lets you attach photos of your documents to a complaint.",
+          "cameraPermission": "The app lets you photograph your documents to attach them to a complaint.",
+          "microphonePermission": false
+        }
+      ],
+      [
         "expo-build-properties",
         {
           "android": {

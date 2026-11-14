@@ -1,46 +1,622 @@
 {
   "categories": [
     {
-      "id": "work_placeholder",
-      "icon": "information-circle-outline",
-      "labelKey": "info.placeholder.category.work",
+      "id": "new_law",
+      "icon": "newspaper-outline",
+      "labelKey": "info.new_law.title",
       "items": [
         {
-          "id": "pay_placeholder_group",
-          "labelKey": "info.placeholder.group.pay",
-          "items": [
-            {
-              "id": "pay_placeholder",
-              "labelKey": "info.placeholder.title.pay",
-              "bodyKey": "info.placeholder.body.pay.unvalidated",
-              "steps": ["info.placeholder.step.pay.unvalidated"],
-              "institutionIds": ["itm"],
-              "refs": "<LEGAL_REFERENCE_PLACEHOLDER_UNVALIDATED>"
-            }
-          ]
+          "id": "what_changed",
+          "labelKey": "info.new_law.what_changed.title",
+          "bodyKey": "info.new_law.what_changed.body",
+          "steps": [
+            "info.new_law.what_changed.step1",
+            "info.new_law.what_changed.step2"
+          ],
+          "institutionIds": [],
+          "refs": "OUG nr. 32/2026, art. 7 alin. (1)–(2), art. 40; OUG nr. 194/2002, art. 27¹ alin. (1) lit. e), art. 27²"
         },
         {
-          "id": "documents_placeholder",
-          "labelKey": "info.placeholder.title.documents",
-          "bodyKey": "info.placeholder.body.documents.unvalidated",
-          "steps": ["info.placeholder.step.documents.unvalidated"],
-          "institutionIds": ["itm"],
-          "refs": "<LEGAL_REFERENCE_PLACEHOLDER_UNVALIDATED>"
+          "id": "single_application",
+          "labelKey": "info.new_law.single_application.title",
+          "bodyKey": "info.new_law.single_application.body",
+          "steps": [
+            "info.new_law.single_application.step1",
+            "info.new_law.single_application.step2",
+            "info.new_law.single_application.step3"
+          ],
+          "institutionIds": [
+            "igi"
+          ],
+          "refs": "OUG nr. 194/2002, art. 27², art. 56 alin. (9)–(11); OUG nr. 32/2026, art. 3"
+        },
+        {
+          "id": "employer_types",
+          "labelKey": "info.new_law.employer_types.title",
+          "bodyKey": "info.new_law.employer_types.body",
+          "steps": [
+            "info.new_law.employer_types.step1",
+            "info.new_law.employer_types.step2"
+          ],
+          "institutionIds": [],
+          "refs": "OUG nr. 32/2026, art. 2 alin. (2) lit. c) și d), art. 4, art. 10, art. 11, art. 12 alin. (1) lit. d), art. 51"
+        },
+        {
+          "id": "check_agency",
+          "labelKey": "info.new_law.check_agency.title",
+          "bodyKey": "info.new_law.check_agency.body",
+          "steps": [
+            "info.new_law.check_agency.step1",
+            "info.new_law.check_agency.step2",
+            "info.new_law.check_agency.step3"
+          ],
+          "institutionIds": [
+            "itm"
+          ],
+          "refs": "OUG nr. 32/2026, art. 23 alin. (1), (4) și (6), art. 41 alin. (2)"
         }
       ]
     },
     {
-      "id": "residence_placeholder",
-      "icon": "document-text-outline",
-      "labelKey": "info.placeholder.category.residence",
+      "id": "contract_pay",
+      "icon": "cash-outline",
+      "labelKey": "info.contract_pay.title",
       "items": [
         {
-          "id": "residence_placeholder_item",
-          "labelKey": "info.placeholder.title.residence",
-          "bodyKey": "info.placeholder.body.residence.unvalidated",
-          "steps": ["info.placeholder.step.residence.unvalidated"],
-          "institutionIds": ["igi"],
-          "refs": "<LEGAL_REFERENCE_PLACEHOLDER_UNVALIDATED>"
+          "id": "contract",
+          "labelKey": "info.contract_pay.contract.title",
+          "icon": "document-text-outline",
+          "items": [
+            {
+              "id": "contracts_needed",
+              "labelKey": "info.contract_pay.contracts_needed.title",
+              "bodyKey": "info.contract_pay.contracts_needed.body",
+              "steps": [
+                "info.contract_pay.contracts_needed.step1",
+                "info.contract_pay.contracts_needed.step2",
+                "info.contract_pay.contracts_needed.step3"
+              ],
+              "institutionIds": [
+                "itm"
+              ],
+              "refs": "Codul muncii, art. 16 alin. (1) și (3); OUG nr. 32/2026, art. 2 alin. (2) lit. f) și g), art. 6 alin. (1)–(2), art. 7 alin. (1) lit. c)"
+            },
+            {
+              "id": "contract_language",
+              "labelKey": "info.contract_pay.contract_language.title",
+              "bodyKey": "info.contract_pay.contract_language.body",
+              "steps": [
+                "info.contract_pay.contract_language.step1",
+                "info.contract_pay.contract_language.step2"
+              ],
+              "institutionIds": [
+                "itm"
+              ],
+              "refs": "Codul muncii, art. 16 alin. (1⁹), art. 260 alin. (1) lit. e⁶); OUG nr. 32/2026, art. 2 alin. (2) lit. f), art. 7 alin. (1) lit. b) și d)"
+            },
+            {
+              "id": "reges_check",
+              "labelKey": "info.contract_pay.reges_check.title",
+              "bodyKey": "info.contract_pay.reges_check.body",
+              "steps": [
+                "info.contract_pay.reges_check.step1",
+                "info.contract_pay.reges_check.step2",
+                "info.contract_pay.reges_check.step3"
+              ],
+              "institutionIds": [
+                "itm"
+              ],
+              "refs": "Codul muncii, art. 16 alin. (2); HG nr. 295/2025, art. 7, art. 8 alin. (6)–(7); OUG nr. 32/2026, art. 40 alin. (2) și (4)"
+            }
+          ]
+        },
+        {
+          "id": "pay",
+          "labelKey": "info.contract_pay.pay.title",
+          "icon": "wallet-outline",
+          "items": [
+            {
+              "id": "minimum_wage",
+              "labelKey": "info.contract_pay.minimum_wage.title",
+              "bodyKey": "info.contract_pay.minimum_wage.body",
+              "steps": [
+                "info.contract_pay.minimum_wage.step1",
+                "info.contract_pay.minimum_wage.step2",
+                "info.contract_pay.minimum_wage.step3"
+              ],
+              "institutionIds": [
+                "itm"
+              ],
+              "refs": "HG nr. 146/2026; Codul muncii, art. 5 alin. (2), art. 164 alin. (1); OUG nr. 32/2026, art. 6 alin. (1) lit. f) și g)"
+            },
+            {
+              "id": "cash_payment",
+              "labelKey": "info.contract_pay.cash_payment.title",
+              "bodyKey": "info.contract_pay.cash_payment.body",
+              "steps": [
+                "info.contract_pay.cash_payment.step1",
+                "info.contract_pay.cash_payment.step2",
+                "info.contract_pay.cash_payment.step3"
+              ],
+              "institutionIds": [
+                "itm"
+              ],
+              "refs": "OUG nr. 32/2026, art. 7 alin. (1) lit. a) și alin. (3); Codul muncii, art. 166 alin. (1)"
+            },
+            {
+              "id": "accommodation_rent",
+              "labelKey": "info.contract_pay.accommodation_rent.title",
+              "bodyKey": "info.contract_pay.accommodation_rent.body",
+              "steps": [
+                "info.contract_pay.accommodation_rent.step1",
+                "info.contract_pay.accommodation_rent.step2",
+                "info.contract_pay.accommodation_rent.step3"
+              ],
+              "institutionIds": [
+                "itm"
+              ],
+              "refs": "OUG nr. 32/2026, art. 6 alin. (2) lit. a), art. 7 alin. (2); Codul muncii, art. 169 alin. (1); OUG nr. 194/2002, art. 27² alin. (7) lit. d), art. 134 pct. 18"
+            },
+            {
+              "id": "fees",
+              "labelKey": "info.contract_pay.fees.title",
+              "bodyKey": "info.contract_pay.fees.body",
+              "steps": [
+                "info.contract_pay.fees.step1",
+                "info.contract_pay.fees.step2",
+                "info.contract_pay.fees.step3"
+              ],
+              "institutionIds": [
+                "itm"
+              ],
+              "refs": "OUG nr. 32/2026, art. 11 alin. (3), art. 12 alin. (8) lit. d), art. 23 alin. (4) și (6), art. 38 alin. (1) lit. d)"
+            },
+            {
+              "id": "costs_who_pays",
+              "labelKey": "info.contract_pay.costs_who_pays.title",
+              "bodyKey": "info.contract_pay.costs_who_pays.body",
+              "steps": [
+                "info.contract_pay.costs_who_pays.step1",
+                "info.contract_pay.costs_who_pays.step2"
+              ],
+              "institutionIds": [],
+              "refs": "OUG nr. 32/2026, art. 2 alin. (2) lit. f) pct. (ii), art. 6 alin. (2), art. 40 alin. (8); Legea nr. 198/2008, anexa, lit. A pct. 4"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "work_time",
+      "icon": "time-outline",
+      "labelKey": "info.work_time.title",
+      "items": [
+        {
+          "id": "hours",
+          "labelKey": "info.work_time.hours.title",
+          "bodyKey": "info.work_time.hours.body",
+          "steps": [
+            "info.work_time.hours.step1",
+            "info.work_time.hours.step2",
+            "info.work_time.hours.step3"
+          ],
+          "institutionIds": [
+            "itm"
+          ],
+          "refs": "Codul muncii, art. 112 alin. (1), art. 114 alin. (1)–(2), art. 135 alin. (1)"
+        },
+        {
+          "id": "overtime",
+          "labelKey": "info.work_time.overtime.title",
+          "bodyKey": "info.work_time.overtime.body",
+          "steps": [
+            "info.work_time.overtime.step1",
+            "info.work_time.overtime.step2",
+            "info.work_time.overtime.step3"
+          ],
+          "institutionIds": [
+            "itm"
+          ],
+          "refs": "Codul muncii, art. 120–123"
+        },
+        {
+          "id": "rest_leave",
+          "labelKey": "info.work_time.rest_leave.title",
+          "bodyKey": "info.work_time.rest_leave.body",
+          "steps": [
+            "info.work_time.rest_leave.step1",
+            "info.work_time.rest_leave.step2"
+          ],
+          "institutionIds": [
+            "itm"
+          ],
+          "refs": "Codul muncii, art. 134 alin. (1), art. 137 alin. (1), art. 145 alin. (1)"
+        },
+        {
+          "id": "safety",
+          "labelKey": "info.work_time.safety.title",
+          "bodyKey": "info.work_time.safety.body",
+          "steps": [
+            "info.work_time.safety.step1",
+            "info.work_time.safety.step2",
+            "info.work_time.safety.step3"
+          ],
+          "institutionIds": [
+            "itm"
+          ],
+          "refs": "OUG nr. 32/2026, art. 7 alin. (1) lit. d); Codul muncii, art. 39 alin. (1) lit. f)"
+        },
+        {
+          "id": "language_course",
+          "labelKey": "info.work_time.language_course.title",
+          "bodyKey": "info.work_time.language_course.body",
+          "steps": [
+            "info.work_time.language_course.step1",
+            "info.work_time.language_course.step2"
+          ],
+          "institutionIds": [
+            "itm"
+          ],
+          "refs": "OUG nr. 32/2026, art. 7 alin. (1) lit. g), art. 40 alin. (9)"
+        },
+        {
+          "id": "second_job",
+          "labelKey": "info.work_time.second_job.title",
+          "bodyKey": "info.work_time.second_job.body",
+          "steps": [
+            "info.work_time.second_job.step1",
+            "info.work_time.second_job.step2"
+          ],
+          "institutionIds": [
+            "igi"
+          ],
+          "refs": "OUG nr. 194/2002, art. 132¹ alin. (1) lit. i), alin. (3) și (4)"
+        }
+      ]
+    },
+    {
+      "id": "documents",
+      "icon": "id-card-outline",
+      "labelKey": "info.documents.title",
+      "items": [
+        {
+          "id": "passport_kept",
+          "labelKey": "info.documents.passport_kept.title",
+          "bodyKey": "info.documents.passport_kept.body",
+          "steps": [
+            "info.documents.passport_kept.step1",
+            "info.documents.passport_kept.step2",
+            "info.documents.passport_kept.step3"
+          ],
+          "institutionIds": [
+            "igi"
+          ],
+          "refs": "OUG nr. 194/2002, art. 108 alin. (2); OUG nr. 32/2026, art. 7 alin. (1) lit. i)"
+        },
+        {
+          "id": "residence_permit",
+          "labelKey": "info.documents.residence_permit.title",
+          "bodyKey": "info.documents.residence_permit.body",
+          "steps": [
+            "info.documents.residence_permit.step1",
+            "info.documents.residence_permit.step2",
+            "info.documents.residence_permit.step3"
+          ],
+          "institutionIds": [
+            "igi"
+          ],
+          "refs": "OUG nr. 194/2002, art. 56 alin. (1), (2), (4) și (11), art. 108 alin. (1)"
+        }
+      ]
+    },
+    {
+      "id": "change_job",
+      "icon": "swap-horizontal-outline",
+      "labelKey": "info.change_job.title",
+      "items": [
+        {
+          "id": "first_6_months",
+          "labelKey": "info.change_job.first_6_months.title",
+          "bodyKey": "info.change_job.first_6_months.body",
+          "steps": [
+            "info.change_job.first_6_months.step1",
+            "info.change_job.first_6_months.step2",
+            "info.change_job.first_6_months.step3",
+            "info.change_job.first_6_months.step4"
+          ],
+          "institutionIds": [
+            "itm",
+            "foundation"
+          ],
+          "refs": "OUG nr. 32/2026, art. 40 alin. (2)–(3); OUG nr. 194/2002, art. 56 alin. (14)"
+        },
+        {
+          "id": "resignation",
+          "labelKey": "info.change_job.resignation.title",
+          "bodyKey": "info.change_job.resignation.body",
+          "steps": [
+            "info.change_job.resignation.step1",
+            "info.change_job.resignation.step2",
+            "info.change_job.resignation.step3"
+          ],
+          "institutionIds": [
+            "itm"
+          ],
+          "refs": "Codul muncii, art. 81; OUG nr. 32/2026, art. 40 alin. (2) și (4); OUG nr. 194/2002, art. 56 alin. (6)"
+        },
+        {
+          "id": "mutual_agreement",
+          "labelKey": "info.change_job.mutual_agreement.title",
+          "bodyKey": "info.change_job.mutual_agreement.body",
+          "steps": [
+            "info.change_job.mutual_agreement.step1",
+            "info.change_job.mutual_agreement.step2",
+            "info.change_job.mutual_agreement.step3"
+          ],
+          "institutionIds": [],
+          "refs": "Codul muncii, art. 55 lit. b); OUG nr. 32/2026, art. 40 alin. (6); OUG nr. 194/2002, art. 56 alin. (6)"
+        },
+        {
+          "id": "release_letter",
+          "labelKey": "info.change_job.release_letter.title",
+          "bodyKey": "info.change_job.release_letter.body",
+          "steps": [
+            "info.change_job.release_letter.step1",
+            "info.change_job.release_letter.step2"
+          ],
+          "institutionIds": [],
+          "refs": "OUG nr. 32/2026, art. 55; OUG nr. 194/2002, art. 56 alin. (9) lit. e) și alin. (10)"
+        },
+        {
+          "id": "repay_costs",
+          "labelKey": "info.change_job.repay_costs.title",
+          "bodyKey": "info.change_job.repay_costs.body",
+          "steps": [
+            "info.change_job.repay_costs.step1",
+            "info.change_job.repay_costs.step2",
+            "info.change_job.repay_costs.step3"
+          ],
+          "institutionIds": [
+            "foundation"
+          ],
+          "refs": "OUG nr. 32/2026, art. 40 alin. (2), (3) și (9)"
+        },
+        {
+          "id": "agency_2_years",
+          "labelKey": "info.change_job.agency_2_years.title",
+          "bodyKey": "info.change_job.agency_2_years.body",
+          "steps": [
+            "info.change_job.agency_2_years.step1",
+            "info.change_job.agency_2_years.step2"
+          ],
+          "institutionIds": [],
+          "refs": "OUG nr. 32/2026, art. 40 alin. (4)–(5); OUG nr. 194/2002, art. 56 alin. (9) lit. e) și alin. (10)"
+        },
+        {
+          "id": "old_law_workers",
+          "labelKey": "info.change_job.old_law_workers.title",
+          "bodyKey": "info.change_job.old_law_workers.body",
+          "steps": [
+            "info.change_job.old_law_workers.step1",
+            "info.change_job.old_law_workers.step2",
+            "info.change_job.old_law_workers.step3"
+          ],
+          "institutionIds": [
+            "igi"
+          ],
+          "refs": "OUG nr. 32/2026, art. 40 alin. (2), art. 49 alin. (6), art. 51; OUG nr. 194/2002, art. 56 alin. (9)–(12)"
+        }
+      ]
+    },
+    {
+      "id": "job_loss",
+      "icon": "alert-circle-outline",
+      "labelKey": "info.job_loss.title",
+      "items": [
+        {
+          "id": "how_long_stay",
+          "labelKey": "info.job_loss.how_long_stay.title",
+          "bodyKey": "info.job_loss.how_long_stay.body",
+          "steps": [
+            "info.job_loss.how_long_stay.step1",
+            "info.job_loss.how_long_stay.step2",
+            "info.job_loss.how_long_stay.step3"
+          ],
+          "institutionIds": [
+            "igi",
+            "foundation"
+          ],
+          "refs": "OUG nr. 194/2002, art. 56 alin. (5)–(7); OUG nr. 32/2026, art. 40 alin. (6)"
+        },
+        {
+          "id": "agency_offers",
+          "labelKey": "info.job_loss.agency_offers.title",
+          "bodyKey": "info.job_loss.agency_offers.body",
+          "steps": [
+            "info.job_loss.agency_offers.step1",
+            "info.job_loss.agency_offers.step2",
+            "info.job_loss.agency_offers.step3"
+          ],
+          "institutionIds": [
+            "itm",
+            "igi"
+          ],
+          "refs": "OUG nr. 32/2026, art. 18 lit. h)–i), art. 39 alin. (1) lit. j), art. 40 alin. (6)–(7)"
+        },
+        {
+          "id": "after_deadline",
+          "labelKey": "info.job_loss.after_deadline.title",
+          "bodyKey": "info.job_loss.after_deadline.body",
+          "steps": [
+            "info.job_loss.after_deadline.step1",
+            "info.job_loss.after_deadline.step2"
+          ],
+          "institutionIds": [
+            "igi",
+            "foundation"
+          ],
+          "refs": "OUG nr. 194/2002, art. 56 alin. (6), art. 81, art. 134"
+        },
+        {
+          "id": "return_decision",
+          "labelKey": "info.job_loss.return_decision.title",
+          "bodyKey": "info.job_loss.return_decision.body",
+          "steps": [
+            "info.job_loss.return_decision.step1",
+            "info.job_loss.return_decision.step2",
+            "info.job_loss.return_decision.step3"
+          ],
+          "institutionIds": [
+            "foundation"
+          ],
+          "refs": "OUG nr. 194/2002, art. 83 alin. (4)–(5), art. 84, art. 85"
+        }
+      ]
+    },
+    {
+      "id": "complaints",
+      "icon": "megaphone-outline",
+      "labelKey": "info.complaints.title",
+      "items": [
+        {
+          "id": "where_complain",
+          "labelKey": "info.complaints.where_complain.title",
+          "bodyKey": "info.complaints.where_complain.body",
+          "steps": [
+            "info.complaints.where_complain.step1",
+            "info.complaints.where_complain.step2",
+            "info.complaints.where_complain.step3"
+          ],
+          "institutionIds": [
+            "itm",
+            "igi",
+            "cncd"
+          ],
+          "refs": "OUG nr. 32/2026, art. 2 alin. (2) lit. f) pct. (iii); OG nr. 27/2002, art. 8"
+        },
+        {
+          "id": "registration_number",
+          "labelKey": "info.complaints.registration_number.title",
+          "bodyKey": "info.complaints.registration_number.body",
+          "steps": [
+            "info.complaints.registration_number.step1",
+            "info.complaints.registration_number.step2",
+            "info.complaints.registration_number.step3"
+          ],
+          "institutionIds": [],
+          "refs": "OG nr. 27/2002, art. 8 alin. (1), art. 9"
+        },
+        {
+          "id": "evidence",
+          "labelKey": "info.complaints.evidence.title",
+          "bodyKey": "info.complaints.evidence.body",
+          "steps": [
+            "info.complaints.evidence.step1",
+            "info.complaints.evidence.step2",
+            "info.complaints.evidence.step3"
+          ],
+          "institutionIds": [],
+          "refs": "Recomandare practică, nu o regulă din lege."
+        },
+        {
+          "id": "retaliation",
+          "labelKey": "info.complaints.retaliation.title",
+          "bodyKey": "info.complaints.retaliation.body",
+          "steps": [
+            "info.complaints.retaliation.step1",
+            "info.complaints.retaliation.step2"
+          ],
+          "institutionIds": [
+            "itm",
+            "cncd"
+          ],
+          "refs": "Codul muncii, art. 5 alin. (2), (7) și (10)"
+        },
+        {
+          "id": "workinromania_complaints",
+          "labelKey": "info.complaints.workinromania_complaints.title",
+          "bodyKey": "info.complaints.workinromania_complaints.body",
+          "steps": [
+            "info.complaints.workinromania_complaints.step1",
+            "info.complaints.workinromania_complaints.step2"
+          ],
+          "institutionIds": [
+            "itm",
+            "foundation"
+          ],
+          "refs": "OUG nr. 32/2026, art. 3 alin. (1), (5) și (6), art. 7 alin. (1) lit. h)"
+        },
+        {
+          "id": "discrimination",
+          "labelKey": "info.complaints.discrimination.title",
+          "bodyKey": "info.complaints.discrimination.body",
+          "steps": [
+            "info.complaints.discrimination.step1",
+            "info.complaints.discrimination.step2"
+          ],
+          "institutionIds": [
+            "itm",
+            "cncd"
+          ],
+          "refs": "Codul muncii, art. 5, art. 6 alin. (1), art. 39 alin. (1) lit. d) și e)"
+        },
+        {
+          "id": "union_strike",
+          "labelKey": "info.complaints.union_strike.title",
+          "bodyKey": "info.complaints.union_strike.body",
+          "steps": [
+            "info.complaints.union_strike.step1",
+            "info.complaints.union_strike.step2"
+          ],
+          "institutionIds": [],
+          "refs": "Codul muncii, art. 39 alin. (1) lit. l) și m), art. 59, art. 234 alin. (2)"
+        },
+        {
+          "id": "trafficking",
+          "labelKey": "info.complaints.trafficking.title",
+          "bodyKey": "info.complaints.trafficking.body",
+          "steps": [
+            "info.complaints.trafficking.step1",
+            "info.complaints.trafficking.step2",
+            "info.complaints.trafficking.step3"
+          ],
+          "institutionIds": [
+            "foundation"
+          ],
+          "refs": "Legea nr. 678/2001, art. 39¹; OUG nr. 194/2002, art. 130"
+        }
+      ]
+    },
+    {
+      "id": "health_family",
+      "icon": "people-outline",
+      "labelKey": "info.health_family.title",
+      "items": [
+        {
+          "id": "health",
+          "labelKey": "info.health_family.health.title",
+          "bodyKey": "info.health_family.health.body",
+          "steps": [
+            "info.health_family.health.step1",
+            "info.health_family.health.step2",
+            "info.health_family.health.step3"
+          ],
+          "institutionIds": [],
+          "refs": "Legea nr. 95/2006 privind reforma în domeniul sănătății, republicată"
+        },
+        {
+          "id": "family",
+          "labelKey": "info.health_family.family.title",
+          "bodyKey": "info.health_family.family.body",
+          "steps": [
+            "info.health_family.family.step1",
+            "info.health_family.family.step2",
+            "info.health_family.family.step3"
+          ],
+          "institutionIds": [
+            "igi"
+          ],
+          "refs": "OUG nr. 194/2002, art. 46 alin. (1), (7), (9), (11) și (12), art. 132¹ alin. (1) lit. n) și alin. (4)"
         }
       ]
     }

@@ -2,7 +2,7 @@ import { getCountyName } from '@/src/complaint/counties';
 import type { ComplaintDraft, ComplaintRoute } from '@/src/complaint/types';
 import type { ComplaintCategory, InstitutionsContent } from '@/src/types/content';
 
-function isUsableEmail(value: string | undefined): value is string {
+export function isUsableEmail(value: string | undefined): value is string {
   return Boolean(
     value &&
       !/^<[^>]+>$/.test(value.trim()) &&

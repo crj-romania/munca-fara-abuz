@@ -1,11 +1,18 @@
 import { Redirect, Stack, useRouter } from 'expo-router';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { ActivityIndicator } from 'react-native';
 
 import { useComplaint } from '@/src/complaint/ComplaintProvider';
-import { pickComplaintAttachments } from '@/src/complaint/attachments';
+import {
+  MAX_ATTACHMENTS,
+  MAX_TOTAL_SIZE,
+  pickComplaintAttachments,
+  pickComplaintPhotos,
+  takeComplaintPhoto,
+} from '@/src/complaint/attachments';
 import type { ComplaintAttachment } from '@/src/complaint/types';
-import { AttachmentList } from '@/src/components/AttachmentList';
+import { AttachmentList, formatAttachmentSize } from '@/src/components/AttachmentList';
 import { AppButton } from '@/src/components/AppButton';
 import { AppScreen } from '@/src/components/AppScreen';
 import { AppText } from '@/src/components/AppText';
@@ -24,7 +31,7 @@ export default function ComplaintAttachmentsScreen() {
     return <Redirect href="/complaint" />;
   }
 
-  const add = async () => {
+  const add = async (pick: typeof pickComplaintAttachments) => {
     if (selectionInFlight.current) {
       return;
     }
@@ -32,13 +39,13 @@ export default function ComplaintAttachmentsScreen() {
     setSelecting(true);
     setErrorKey(null);
     try {
-      const selected = await pickComplaintAttachments(draft.attachments);
+      const selected = await pick(draft.attachments);
       if (selected.length > 0) {
         addAttachments(selected, draft.id);
       }
     } catch (error) {
       const key = error instanceof Error ? error.message : '';
-      setErrorKey(/^attachment\.error\.(selection|tooMany|tooLarge|totalSize|type|unavailable|missing)$/.test(key)
+      setErrorKey(/^attachment\.error\.(selection|tooMany|tooLarge|totalSize|type|unavailable|missing|camera)$/.test(key)
         ? key : 'attachment.error.selection');
     } finally {
       selectionInFlight.current = false;
@@ -50,6 +57,8 @@ export default function ComplaintAttachmentsScreen() {
     setErrorKey(null);
     removeAttachment(attachment.id);
   };
+  const totalSize = draft.attachments.reduce((sum, item) => sum + item.size, 0);
+  const full = draft.attachments.length >= MAX_ATTACHMENTS;
 
   return (
     <AppScreen>
@@ -61,18 +70,43 @@ export default function ComplaintAttachmentsScreen() {
         <AppText variant="caption">{t('attachment.limits')}</AppText>
       </SectionCard>
       <AppButton
-        disabled={selecting}
-        icon="attach-outline"
-        label={t('attachment.add')}
-        onPress={() => void add()}
+        disabled={selecting || full}
+        icon="camera-outline"
+        label={t('attachment.camera')}
+        onPress={() => void add(takeComplaintPhoto)}
         variant="secondary"
       />
-      <AttachmentList attachments={draft.attachments} onRemove={remove} />
+      <AppButton
+        disabled={selecting || full}
+        icon="images-outline"
+        label={t('attachment.gallery')}
+        onPress={() => void add(pickComplaintPhotos)}
+        variant="secondary"
+      />
+      <AppButton
+        disabled={selecting || full}
+        icon="attach-outline"
+        label={t('attachment.add')}
+        onPress={() => void add(pickComplaintAttachments)}
+        variant="secondary"
+      />
+      {selecting ? <><ActivityIndicator /><AppText variant="caption">{t('attachment.processing')}</AppText></> : null}
       {errorKey ? (
         <AppText style={{ color: colors.danger }} variant="caption">
           {t(errorKey)}
         </AppText>
       ) : null}
+      {draft.attachments.length ? (
+        <AppText variant="label">
+          {t('attachment.summary', {
+            count: draft.attachments.length,
+            max: MAX_ATTACHMENTS,
+            size: formatAttachmentSize(totalSize),
+            maxSize: formatAttachmentSize(MAX_TOTAL_SIZE),
+          })}
+        </AppText>
+      ) : null}
+      <AttachmentList attachments={draft.attachments} onRemove={remove} />
       <AppButton
         icon="arrow-forward"
         disabled={selecting}

@@ -23,7 +23,7 @@ export default function ComplaintWorkScreen() {
         titleKey="complaint.work.title"
         descriptionKey="complaint.work.description"
         fields={getCategoryWorkFields(complaint, category)}
-        onContinue={() => router.navigate(category.violations.length ? '/complaint/violations' : '/complaint/details')}
+        onContinue={() => router.navigate('/complaint/employer')}
       />
     </AppScreen>
   );

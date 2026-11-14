@@ -11,7 +11,7 @@ type AppButtonProps = {
   label: string;
   onPress?: () => void;
   icon?: ComponentProps<typeof Ionicons>['name'];
-  variant?: 'primary' | 'secondary';
+  variant?: 'primary' | 'secondary' | 'danger';
   disabled?: boolean;
 };
 
@@ -24,6 +24,7 @@ export function AppButton({
 }: AppButtonProps) {
   const { currentLanguage } = useContent();
   const isPrimary = variant === 'primary';
+  const foreground = isPrimary ? colors.white : variant === 'danger' ? colors.danger : colors.primary;
 
   return (
     <Pressable
@@ -34,7 +35,7 @@ export function AppButton({
       onPress={onPress}
       style={({ pressed }) => [
         styles.button,
-        isPrimary ? styles.primary : styles.secondary,
+        isPrimary ? styles.primary : variant === 'danger' ? styles.danger : styles.secondary,
         pressed && !disabled &&
           (isPrimary ? styles.primaryPressed : styles.secondaryPressed),
         disabled && styles.disabled,
@@ -48,14 +49,14 @@ export function AppButton({
       >
         {icon ? (
           <Ionicons
-            color={isPrimary ? colors.white : colors.primary}
+            color={foreground}
             name={icon}
             size={24}
           />
         ) : null}
         <AppText
           variant="label"
-          style={{ color: isPrimary ? colors.white : colors.primary }}
+          style={{ color: foreground }}
         >
           {label}
         </AppText>
@@ -85,6 +86,10 @@ const styles = StyleSheet.create({
   secondary: {
     backgroundColor: colors.white,
     borderColor: colors.primary,
+  },
+  danger: {
+    backgroundColor: colors.white,
+    borderColor: colors.danger,
   },
   primaryPressed: {
     backgroundColor: colors.primaryPressed,

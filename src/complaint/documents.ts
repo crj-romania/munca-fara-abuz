@@ -3,7 +3,13 @@ import * as IntentLauncher from 'expo-intent-launcher';
 import * as Sharing from 'expo-sharing';
 import { Platform } from 'react-native';
 
-import { isOwnedDraftAttachmentUri } from '@/src/complaint/attachments';
+import {
+  clearAllComplaintCaches,
+  isOwnedDraftAttachmentUri,
+  MAX_ATTACHMENTS,
+  MAX_FILE_SIZE,
+  MAX_TOTAL_SIZE,
+} from '@/src/complaint/attachments';
 import type {
   ComplaintAttachment,
   StoredComplaintDocument,
@@ -120,7 +126,7 @@ async function readAttachmentsForDocument(fileName: string): Promise<ComplaintAt
   }
 
   const metadata = (parsed as AttachmentMetadataFile).attachments;
-  if (metadata.length > 5) {
+  if (metadata.length > MAX_ATTACHMENTS) {
     throw new Error('Stored complaint attachments are missing or corrupted.');
   }
   const ids = new Set(metadata.map((item) => item.id));
@@ -132,9 +138,11 @@ async function readAttachmentsForDocument(fileName: string): Promise<ComplaintAt
   return Promise.all(metadata.map(async (item) => {
     const displayName = typeof item.name === 'string' ? safeDisplayName(item.name) : '';
     const extension = typeof item.fileName === 'string' ? extensionFor(item.fileName) : null;
+    const storageIndex = typeof item.fileName === 'string'
+      ? Number(/^file-([1-9][0-9]?)\.(pdf|jpg|jpeg|png|webp)$/i.exec(item.fileName)?.[1] ?? 0) : 0;
     if (
       !/^[a-z0-9-]{8,120}$/i.test(item.id) ||
-      !item.fileName || !/^file-[1-5]\.(pdf|jpg|jpeg|png|webp)$/i.test(item.fileName) ||
+      !item.fileName || storageIndex < 1 || storageIndex > MAX_ATTACHMENTS ||
       !extension || MIME_BY_EXTENSION[extension] !== item.mimeType ||
       !displayName || displayName !== item.name ||
       !Number.isFinite(item.size) || item.size <= 0
@@ -199,16 +207,16 @@ export async function persistGeneratedPdf(
   let companionDirectoryCreated = false;
 
   try {
-    if (attachments.length > 5) {
+    if (attachments.length > MAX_ATTACHMENTS) {
       throw new Error('Too many complaint attachments.');
     }
     const totalAttachmentSize = attachments.reduce((sum, item) => sum + item.size, 0);
-    if (!Number.isFinite(totalAttachmentSize) || totalAttachmentSize > 15 * 1024 * 1024) {
+    if (!Number.isFinite(totalAttachmentSize) || totalAttachmentSize > MAX_TOTAL_SIZE) {
       throw new Error('Complaint attachments exceed the allowed total size.');
     }
     for (const attachment of attachments) {
       assertAttachmentShape(attachment);
-      if (attachment.size > 10 * 1024 * 1024) {
+      if (attachment.size > MAX_FILE_SIZE) {
         throw new Error('Complaint attachment exceeds the allowed file size.');
       }
     }
@@ -222,7 +230,7 @@ export async function persistGeneratedPdf(
     const metadata: StoredAttachmentMetadata[] = [];
     for (const [index, attachment] of attachments.entries()) {
       const { extension, name } = assertAttachmentShape(attachment);
-      if (attachment.size > 10 * 1024 * 1024) {
+      if (attachment.size > MAX_FILE_SIZE) {
         throw new Error('Complaint attachment exceeds the allowed file size.');
       }
       const fileName = attachmentStorageName(index, extension);
@@ -309,4 +317,18 @@ export async function deleteComplaintDocument(uri: string): Promise<void> {
   await FileSystem.deleteAsync(uri, { idempotent: true });
   // This deterministic direct child is the only companion directory this PDF owns.
   await FileSystem.deleteAsync(companionDirectoryFor(fileName), { idempotent: true });
+}
+
+// "Delete everything": every saved complaint PDF with its attachments, and all
+// temporary complaint files. Originals elsewhere on the phone are untouched.
+export async function deleteAllComplaintData(): Promise<void> {
+  const results = await Promise.allSettled([
+    DOCUMENTS_DIRECTORY
+      ? FileSystem.deleteAsync(DOCUMENTS_DIRECTORY, { idempotent: true })
+      : Promise.resolve(),
+    clearAllComplaintCaches(),
+  ]);
+  if (results.some((result) => result.status === 'rejected')) {
+    throw new Error('Not all complaint data could be deleted.');
+  }
 }

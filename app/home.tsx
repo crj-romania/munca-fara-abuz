@@ -6,6 +6,7 @@ import { AppScreen } from '@/src/components/AppScreen';
 import { AppText } from '@/src/components/AppText';
 import { HomeAction } from '@/src/components/HomeAction';
 import { SectionCard } from '@/src/components/SectionCard';
+import { StatisticsConsentPrompt } from '@/src/components/StatisticsConsent';
 import { useContent } from '@/src/content/ContentProvider';
 
 export default function HomeScreen() {
@@ -32,6 +33,8 @@ export default function HomeScreen() {
         label={t('home.emergency')}
         onPress={() => router.push('/emergency')}
       />
+
+      <StatisticsConsentPrompt />
 
       <AppButton
         icon="settings-outline"

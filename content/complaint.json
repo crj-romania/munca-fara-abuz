@@ -2,8 +2,7 @@
   "statusQuestions": {
     "employment": {
       "labelKey": "complaint.q.employment",
-      "options": ["working", "stopped", "not_started"]
-
+      "options": ["working", "stopped", "not_started", "unknown"]
     }
   },
   "commonFields": [
@@ -77,7 +76,8 @@
       "options": [
         { "value": "working", "labelKey": "complaint.f.employmentStatus.working" },
         { "value": "stopped", "labelKey": "complaint.f.employmentStatus.stopped" },
-        { "value": "not_started", "labelKey": "complaint.f.employmentStatus.not_started" }
+        { "value": "not_started", "labelKey": "complaint.f.employmentStatus.not_started" },
+        { "value": "unknown", "labelKey": "complaint.f.employmentStatus.unknown" }
       ]
     },
     { "id": "occupation", "type": "text", "required": true, "labelKey": "complaint.f.occupation", "hintKey": "complaint.f.occupation.hint" },
@@ -86,7 +86,7 @@
       "type": "monthYear",
       "required": true,
       "labelKey": "complaint.f.workStart",
-      "visibleWhen": { "field": "employmentStatus", "values": ["working", "stopped"] },
+      "visibleWhen": { "field": "employmentStatus", "values": ["working", "stopped", "unknown"] },
       "notFuture": true
     },
     {
@@ -98,7 +98,7 @@
         { "value": "exact", "labelKey": "complaint.date.exact" },
         { "value": "approximate", "labelKey": "complaint.date.approximate" }
       ],
-      "visibleWhen": { "field": "employmentStatus", "values": ["working", "stopped"] }
+      "visibleWhen": { "field": "employmentStatus", "values": ["working", "stopped", "unknown"] }
     },
     {
       "id": "workEnd",
@@ -154,8 +154,7 @@
     { "id": "employerName", "type": "text", "required": true, "labelKey": "complaint.f.employerName", "hintKey": "complaint.f.employerName.hint" },
     { "id": "employerCounty", "type": "county", "required": true, "labelKey": "complaint.f.employerCounty" },
     { "id": "employerAddress", "type": "text", "required": false, "labelKey": "complaint.f.employerAddress" },
-    { "id": "employerRegCom", "type": "text", "required": false, "labelKey": "complaint.f.employerRegCom" },
-    { "id": "employerCui", "type": "text", "required": false, "labelKey": "complaint.f.employerCui" }
+    { "id": "employerCui", "type": "text", "required": false, "labelKey": "complaint.f.employerCui", "infoKey": "complaint.f.cui.info" }
   ],
   "partyTypes": [
     {
@@ -165,8 +164,7 @@
         { "id": "employerName", "type": "text", "required": false, "labelKey": "complaint.f.employerName", "hintKey": "complaint.f.employerName.hint", "requiredAnyOf": ["employerName", "employerDetails"] },
         { "id": "employerCounty", "type": "county", "required": true, "labelKey": "complaint.f.employerCounty", "allowUnknown": true },
         { "id": "employerAddress", "type": "text", "required": false, "labelKey": "complaint.f.employerAddress" },
-        { "id": "employerRegCom", "type": "text", "required": false, "labelKey": "complaint.f.employerRegCom" },
-        { "id": "employerCui", "type": "text", "required": false, "labelKey": "complaint.f.employerCui" },
+        { "id": "employerCui", "type": "text", "required": false, "labelKey": "complaint.f.employerCui", "infoKey": "complaint.f.cui.info" },
         { "id": "employerDetails", "type": "text", "required": false, "labelKey": "complaint.f.employerDetails", "hintKey": "complaint.f.partyDetails.hint", "requiredAnyOf": ["employerName", "employerDetails"] }
       ]
     },
@@ -177,8 +175,7 @@
         { "id": "agencyName", "type": "text", "required": false, "labelKey": "complaint.f.agencyName", "requiredAnyOf": ["agencyName", "agencyDetails"] },
         { "id": "agencyCounty", "type": "county", "required": true, "labelKey": "complaint.f.agencyCounty", "allowUnknown": true },
         { "id": "agencyAddress", "type": "text", "required": false, "labelKey": "complaint.f.agencyAddress" },
-        { "id": "agencyRegCom", "type": "text", "required": false, "labelKey": "complaint.f.agencyRegCom" },
-        { "id": "agencyCui", "type": "text", "required": false, "labelKey": "complaint.f.agencyCui" },
+        { "id": "agencyCui", "type": "text", "required": false, "labelKey": "complaint.f.agencyCui", "infoKey": "complaint.f.cui.info" },
         { "id": "agencyDetails", "type": "text", "required": false, "labelKey": "complaint.f.agencyDetails", "hintKey": "complaint.f.partyDetails.hint", "requiredAnyOf": ["agencyName", "agencyDetails"] }
       ]
     },
@@ -198,7 +195,7 @@
       "id": "unpaid_wages",
       "labelKey": "complaint.cat.unpaid_wages",
       "requiresEmployer": true,
-      "employmentStatuses": ["working", "stopped"],
+      "employmentStatuses": ["working", "stopped", "unknown"],
       "suggestedPartyIds": ["employer"],
       "violations": [
         { "id": "no_salary", "labelKey": "complaint.v.unpaid.no_salary", "sentenceKey": "complaint.v.unpaid.no_salary.ro" },
@@ -220,7 +217,7 @@
       "id": "working_time",
       "labelKey": "complaint.cat.working_time",
       "requiresEmployer": true,
-      "employmentStatuses": ["working", "stopped"],
+      "employmentStatuses": ["working", "stopped", "unknown"],
       "suggestedPartyIds": ["employer"],
       "violations": [
         { "id": "excessive_hours", "labelKey": "complaint.v.working_time.excessive_hours", "sentenceKey": "complaint.v.working_time.excessive_hours.ro" },
@@ -273,11 +270,13 @@
       "id": "termination",
       "labelKey": "complaint.cat.termination",
       "requiresEmployer": true,
-      "employmentStatuses": ["stopped"],
+      "employmentStatuses": ["stopped", "unknown"],
       "suggestedPartyIds": ["employer"],
       "violations": [
-        { "id": "no_docs_on_exit", "labelKey": "complaint.v.termination.no_docs_on_exit", "sentenceKey": "complaint.v.termination.no_docs_on_exit.ro" },
+        { "id": "ended_without_consent", "labelKey": "complaint.v.termination.ended_without_consent", "sentenceKey": "complaint.v.termination.ended_without_consent.ro" },
+        { "id": "nothing_signed", "labelKey": "complaint.v.termination.nothing_signed", "sentenceKey": "complaint.v.termination.nothing_signed.ro" },
         { "id": "forced_resignation", "labelKey": "complaint.v.termination.forced_resignation", "sentenceKey": "complaint.v.termination.forced_resignation.ro" },
+        { "id": "no_docs_on_exit", "labelKey": "complaint.v.termination.no_docs_on_exit", "sentenceKey": "complaint.v.termination.no_docs_on_exit.ro" },
         { "id": "final_pay_missing", "labelKey": "complaint.v.termination.final_pay_missing", "sentenceKey": "complaint.v.termination.final_pay_missing.ro" }
       ],
       "fields": [{ "id": "freeText", "type": "freetext", "required": false, "labelKey": "complaint.f.freeText", "hintKey": "complaint.f.freeText.hint.termination" }],

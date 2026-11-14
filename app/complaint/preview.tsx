@@ -4,6 +4,7 @@ import { Redirect, Stack, useNavigation, useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { track } from '@/src/analytics/analytics';
 import { useComplaint } from '@/src/complaint/ComplaintProvider';
 import {
   assertComplaintFilesAvailable,
@@ -120,7 +121,8 @@ export default function ComplaintPreviewScreen() {
     );
   }
 
-  const emailUnavailable = generated.recipients.length === 0 || !generated.templateReady;
+  // Provisional templates are not blocked: they go to the test address only.
+  const emailUnavailable = generated.recipients.length === 0;
 
   return (
     <AppScreen>
@@ -141,6 +143,17 @@ export default function ComplaintPreviewScreen() {
         </AppText>
         <AppText variant="caption">{generated.fileName}</AppText>
       </SectionCard>
+      {generated.testMode ? (
+        <SectionCard>
+          <AppText variant="label">{t('complaint.preview.testTitle')}</AppText>
+          <AppText>
+            {t('complaint.preview.testNotice', {
+              destination: generated.destinationLabel,
+              emails: generated.intendedRecipients.join(', ') || t('complaint.preview.testNoEmail'),
+            })}
+          </AppText>
+        </SectionCard>
+      ) : null}
       <SectionCard>
         <AppText variant="label">{t('complaint.preview.privacyTitle')}</AppText>
         <AppText>{t('complaint.preview.dataCleared')}</AppText>
@@ -172,11 +185,11 @@ export default function ComplaintPreviewScreen() {
         disabled={emailUnavailable}
         icon="mail-outline"
         label={
-          !generated.templateReady
-            ? t('complaint.preview.templateUnavailable')
-            : emailUnavailable
-            ? t('complaint.preview.emailRecipientUnavailable')
-            : t('complaint.preview.email')
+          emailUnavailable
+            ? t(generated.testMode
+              ? 'complaint.preview.testRecipientMissing'
+              : 'complaint.preview.emailRecipientUnavailable')
+            : t(generated.testMode ? 'complaint.preview.emailTest' : 'complaint.preview.email')
         }
         onPress={() => {
           setActionErrorKey(null);
@@ -193,6 +206,8 @@ export default function ComplaintPreviewScreen() {
               attachments: [generated.uri, ...generated.attachments.map((attachment) => attachment.uri)],
             });
             if (result.status !== MailComposer.MailComposerStatus.CANCELLED) {
+              track('complaint_generated', { categoryId: generated.categoryId, action: 'email',
+                mode: generated.testMode ? 'test' : 'live' });
               router.replace({
                 pathname: '/complaint/complete',
                 params: { action: 'email' },
@@ -211,6 +226,8 @@ export default function ComplaintPreviewScreen() {
           setActionErrorKey(null);
           void shareComplaintDocument(generated.uri)
             .then(() => {
+              track('complaint_generated', { categoryId: generated.categoryId, action: 'saved',
+                mode: generated.testMode ? 'test' : 'live' });
               router.replace({
                 pathname: '/complaint/complete',
                 params: { action: 'saved' },

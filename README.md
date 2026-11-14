@@ -2,7 +2,7 @@
 
 ## Stare — 9 octombrie 2026 (preluare de către Claude)
 
-Problemele din predarea din 17 septembrie ([rezumat](SUMAR_editare_templateuri.md))
+Problemele din predarea din 17 septembrie ([rezumat](docs/SUMAR_editare_templateuri.md))
 sunt remediate: validatorul acceptă schema 2 (snapshotul anterior nu putea
 încărca nici conținutul împachetat), validarea structurii `complaint.json` și a
 rutării a fost reconstituită (inclusiv condițiile pe fapte), câmpurile opționale
@@ -32,8 +32,10 @@ manuală de traducere.
 
 ## Formularul de plângere
 
-Ordinea curentă este: categorie → date personale → muncă → fapte → text liber /
-traducere → persoane/firme implicate → atașamente → verificare → generare PDF.
+Ordinea curentă este: categorie → fapte („Ce s-a întâmplat?”) → detalii → text
+liber / traducere → date personale → muncă → persoane/firme implicate →
+atașamente → verificare → generare PDF. Problema se descrie înaintea datelor
+personale.
 Butoanele de modificare din verificare
 revin la secțiunea aleasă și păstrează răspunsurile în memorie.
 
@@ -97,9 +99,12 @@ Modificarea originalului sau a limbii sale invalidează traducerea anterioară.
   într-o anexă pe pagină separată. Se păstrează aceeași regulă pentru ML Kit și
   Google Translate. Fonturile Noto necesare sunt încorporate în PDF-ul nativ.
 
-Atașamente: PDF, JPG/JPEG, PNG sau WEBP, cel mult 5 fișiere, 10 MiB per fișier
-și 15 MiB total, înainte de PDF. Sunt selectate explicit din telefon, copiate
-local și nu modifică originalele. Nu există OCR sau traducere a atașamentelor.
+Atașamente: cel mult 20 de fișiere — poze făcute din aplicație, poze/capturi de
+ecran alese din galerie (selecție multiplă) sau fișiere PDF/imagine. Pozele
+(JPG, PNG, WEBP, HEIC) sunt recodate local ca JPEG de cel mult 2000 px pe latura
+lungă, calitate 0,7; o imagine mică deja eficientă rămâne neschimbată. Limite:
+10 MiB per fișier și 15 MiB total, ca emailul să rămână sub ~25 MB după
+codare. Fișierele sunt copiate local și nu modifică originalele. Nu există OCR sau traducere a atașamentelor.
 Emailul include PDF-ul și toate fișierele; dacă unul lipsește, compunerea
 emailului este blocată. Furnizorul de email poate avea alte limite de mărime.
 
@@ -117,7 +122,9 @@ Teste suplimentare pe telefon, cu date fictive:
 3. În EN/UR/NE, copiază și lipește o traducere. Modifică originalul: traducerea
    trebuie refăcută. Verifică diacriticele, scriptul original și pagina anexei.
 4. Adaugă o imagine și un PDF, elimină unul și verifică lista finală. Încearcă
-   anularea selectorului, un fișier prea mare și mai mult de 5 fișiere.
+   anularea selectorului, un PDF prea mare și mai mult de 20 de fișiere.
+   Alege 10 poze din galerie odată și fă o poză cu camera: dimensiunile
+   afișate trebuie să fie de ordinul sutelor de KB.
 5. Redeschide aplicația: PDF-ul și anexele salvate trebuie să poată fi deschise
    separat. Ștergerea documentului nu trebuie să atingă fișierele originale.
 6. În buildul ML Kit: prima traducere pe Wi-Fi, apoi încă una în modul avion.
@@ -234,6 +241,24 @@ npx eas-cli@latest build --platform android --profile development
 npm run start:dev-client
 ```
 
+### Build de test și build de producție
+
+Fiecare profil EAS setează `EXPO_PUBLIC_APP_ENV`:
+
+- `development` și `preview` sunt builduri de test. Afișează pe fiecare ecran
+  bannerul roșu „TEST · v…”. Dacă `EXPO_PUBLIC_FEEDBACK_URL` e o adresă
+  `https://` (formular sau grup WhatsApp), bannerul devine link de feedback.
+  Statisticile Aptabase raportează versiunea cu sufix (de exemplu `0.2.0-preview`),
+  ca să poată fi filtrate din cifrele reale.
+- `production` produce App Bundle-ul (`.aab`) pentru Google Play, fără banner:
+
+```powershell
+npx eas-cli@latest build --platform android --profile production
+```
+
+Versiunea aplicației (`version` din `app.json`) apare în Setări, sub versiunea
+conținutului. `versionCode` crește automat la fiecare build (`appVersionSource: remote`).
+
 Aceste comenzi pornesc un build în EAS numai când le execuți. Alternativa locală Android necesită
 Android Studio/SDK și `npx expo run:android`. iOS necesită macOS/Xcode sau EAS;
 ținta minimă este 15.5, conform dependenței ML Kit.
@@ -336,7 +361,7 @@ content/
   institutions.json
 scripts/
   check-content.mjs
-  generate-test-locales.mjs
+  generate-test-locales.mjs (retras: limbile au traduceri reale)
   check-phase2.mjs
   check-phase3.mjs
 src/

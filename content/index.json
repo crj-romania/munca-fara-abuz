@@ -1,12 +1,74 @@
 {
   "schemaVersion": 2,
-  "contentVersion": "2026-10-09.1",
+  "contentVersion": "2026-11-14.3",
   "legalUpdatedAt": "2026-08-05",
   "languages": [
-    { "code": "en", "name": "English", "rtl": false, "mt": "mlkit:en" },
-    { "code": "ro", "name": "Română", "rtl": false, "mt": "mlkit:ro" },
-    { "code": "ne", "name": "नेपाली", "rtl": false, "mt": "none" },
-    { "code": "ur", "name": "اردو", "rtl": true, "mt": "mlkit:ur" }
+    {
+      "code": "en",
+      "name": "English",
+      "rtl": false,
+      "mt": "mlkit:en"
+    },
+    {
+      "code": "ro",
+      "name": "Română",
+      "rtl": false,
+      "mt": "mlkit:ro"
+    },
+    {
+      "code": "ne",
+      "name": "नेपाली",
+      "rtl": false,
+      "mt": "none"
+    },
+    {
+      "code": "hi",
+      "name": "हिन्दी",
+      "rtl": false,
+      "mt": "mlkit:hi"
+    },
+    {
+      "code": "bn",
+      "name": "বাংলা",
+      "rtl": false,
+      "mt": "mlkit:bn"
+    },
+    {
+      "code": "si",
+      "name": "සිංහල",
+      "rtl": false,
+      "mt": "none"
+    },
+    {
+      "code": "ta",
+      "name": "தமிழ்",
+      "rtl": false,
+      "mt": "mlkit:ta"
+    },
+    {
+      "code": "ur",
+      "name": "اردو",
+      "rtl": true,
+      "mt": "mlkit:ur"
+    },
+    {
+      "code": "ar",
+      "name": "العربية",
+      "rtl": true,
+      "mt": "mlkit:ar"
+    },
+    {
+      "code": "tl",
+      "name": "Tagalog",
+      "rtl": false,
+      "mt": "mlkit:tl"
+    },
+    {
+      "code": "vi",
+      "name": "Tiếng Việt",
+      "rtl": false,
+      "mt": "mlkit:vi"
+    }
   ],
   "files": {
     "info": "info.json",

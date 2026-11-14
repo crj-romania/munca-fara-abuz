@@ -1,0 +1,6 @@
+{
+  "_comment": "Keys whose translation may legitimately be identical to English in a language (brand names, codes, loanwords). Every entry must be a deliberate choice.",
+  "*": ["app.name", "contact.whatsapp"],
+  "tl": ["home.header", "home.emergency", "home.settings", "settings.title", "emergency.title", "contact.email", "inst.foundation", "complaint.f.email", "complaint.party.employer"],
+  "vi": ["contact.email"]
+}

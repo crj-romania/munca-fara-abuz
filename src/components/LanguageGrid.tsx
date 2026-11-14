@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 
 import { AppText } from '@/src/components/AppText';
+import { track } from '@/src/analytics/analytics';
 import { useContent } from '@/src/content/ContentProvider';
 import i18n from '@/src/i18n/i18n';
 import { colors } from '@/src/theme/colors';
@@ -29,6 +30,7 @@ export function LanguageGrid({ onApplied }: LanguageGridProps) {
     try {
       await i18n.changeLanguage(languageCode);
       await waitForIndicator();
+      track('language_selected', { lang: languageCode });
       const reloading = await applyLanguage(languageCode);
       if (!reloading) {
         onApplied?.();

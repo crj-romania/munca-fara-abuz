@@ -75,6 +75,9 @@ export type Institution = {
 
 export type InstitutionsContent = {
   institutions: Institution[];
+  // While a category's legal template is still provisional, its complaints are
+  // emailed only to this address, stating the authority they would reach.
+  testRecipient?: string;
 };
 
 export type ComplaintFieldType =
@@ -96,6 +99,8 @@ export type ComplaintField = {
   required: boolean;
   labelKey: string;
   hintKey?: string;
+  // Longer help shown on demand behind an (i) button next to the label.
+  infoKey?: string;
   options?: ComplaintFieldOption[];
   visibleWhen?: {
     field: string;

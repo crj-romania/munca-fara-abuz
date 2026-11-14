@@ -1,6 +1,7 @@
 import { Stack, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 
+import { track } from '@/src/analytics/analytics';
 import { useComplaint } from '@/src/complaint/ComplaintProvider';
 import { AppScreen } from '@/src/components/AppScreen';
 import { AppText } from '@/src/components/AppText';
@@ -43,9 +44,11 @@ export default function ComplaintCategoryScreen() {
             key={category.id}
             label={t(category.labelKey)}
             onPress={() => {
+              track('complaint_started', { categoryId: category.id });
               startComplaint(category.id, category.suggestedPartyIds, currentLanguage.code,
                 getInitialCategoryValues(category));
-              router.navigate('/complaint/identity');
+              // What happened comes first; personal details are asked only afterwards.
+              router.navigate(category.violations.length ? '/complaint/violations' : '/complaint/details');
             }}
           />
         );

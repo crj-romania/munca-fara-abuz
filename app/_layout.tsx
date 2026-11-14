@@ -17,6 +17,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { loadAnalyticsConsent, track } from '@/src/analytics/analytics';
 import { ComplaintProvider } from '@/src/complaint/ComplaintProvider';
 import { ContentProvider } from '@/src/content/ContentProvider';
 import { colors } from '@/src/theme/colors';
@@ -64,6 +65,10 @@ export default function RootLayout() {
     NotoSansTamil_400Regular,
     NotoSansTamil_700Bold,
   });
+
+  useEffect(() => {
+    void loadAnalyticsConsent().then(() => track('app_open')).catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (fontsLoaded || fontError) {

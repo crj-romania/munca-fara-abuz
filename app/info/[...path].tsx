@@ -1,9 +1,11 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import type { ComponentProps } from 'react';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
+import { track } from '@/src/analytics/analytics';
 import { AppButton } from '@/src/components/AppButton';
 import { AppScreen } from '@/src/components/AppScreen';
 import { AppText } from '@/src/components/AppText';
@@ -39,6 +41,11 @@ export default function InfoPathScreen() {
   const segments = normalizePath(path).map(decodeURIComponent);
   const info = getInfoContent(content);
   const node = resolveInfoPath(info, segments);
+  const leafId = node && !isInfoBranch(node) ? node.id : null;
+  const categoryId = segments[0] ?? '';
+  useEffect(() => {
+    if (leafId) track('info_item_viewed', { categoryId, itemId: leafId });
+  }, [categoryId, leafId]);
 
   if (!node) {
     return (

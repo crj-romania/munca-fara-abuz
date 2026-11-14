@@ -25,13 +25,18 @@ export default function ComplaintReviewScreen() {
   const category = findComplaintCategory(complaint, draft.categoryId);
   if (!category) return <Redirect href="/complaint" />;
 
-  const sections: { title: string; route: Href; fields: ComplaintField[] }[] = [
+  type Section = { title: string; route: Href; fields: ComplaintField[] };
+  // Same order as the flow: the problem first, then the person and the parties.
+  const problemSections: Section[] = [
+    { title: t('complaint.details.title'), route: '/complaint/details', fields: category.fields.filter((field) => field.type !== 'freetext') },
+  ];
+  const personSections: Section[] = [
     { title: t('complaint.identity.title'), route: '/complaint/identity', fields: complaint.commonFields },
     { title: t('complaint.work.title'), route: '/complaint/status', fields: getCategoryWorkFields(complaint, category) },
-    { title: t('complaint.details.title'), route: '/complaint/details', fields: category.fields.filter((field) => field.type !== 'freetext') },
     ...complaint.partyTypes.filter((party) => draft.selectedPartyIds.includes(party.id))
       .map((party) => ({ title: t(party.labelKey), route: '/complaint/employer' as Href, fields: party.fields })),
   ];
+  const sections = [...problemSections, ...personSections];
   const narrativeError = getNarrativeError(category, draft);
   const valid = !narrativeError && draft.selectedPartyIds.length > 0 &&
     sections.every((section) => getVisibleComplaintFields(section.fields, draft.values, draft.selectedViolationIds)
@@ -63,8 +68,8 @@ export default function ComplaintReviewScreen() {
         <AppButton label={t('complaint.review.edit')} variant="secondary"
           onPress={() => router.dismissTo(category.violations.length ? '/complaint/violations' : '/complaint/text')} />
       </SectionCard>
-      {sections.filter((section) => section.fields.length > 0).map((section, index) => (
-        <SectionCard key={`${section.route}-${index}`}>
+      {problemSections.filter((section) => section.fields.length > 0).map((section, index) => (
+        <SectionCard key={`problem-${section.route}-${index}`}>
           <AppText variant="subtitle">{section.title}</AppText>
           {getVisibleComplaintFields(section.fields, draft.values, draft.selectedViolationIds).map((field) => {
             const error = getComplaintFieldError(field, draft.values, draft.selectedViolationIds);
@@ -94,6 +99,20 @@ export default function ComplaintReviewScreen() {
         {narrativeError ? <AppText style={{ color: colors.danger }}>{t(narrativeError)}</AppText> : null}
         <AppButton label={t('complaint.review.edit')} variant="secondary" onPress={() => router.dismissTo('/complaint/text')} />
       </SectionCard>
+      {personSections.filter((section) => section.fields.length > 0).map((section, index) => (
+        <SectionCard key={`person-${section.route}-${index}`}>
+          <AppText variant="subtitle">{section.title}</AppText>
+          {getVisibleComplaintFields(section.fields, draft.values, draft.selectedViolationIds).map((field) => {
+            const error = getComplaintFieldError(field, draft.values, draft.selectedViolationIds);
+            if (!draft.values[field.id]?.trim() && !error) return null;
+            return <AppText key={field.id} style={error ? { color: colors.danger } : undefined}>
+              {t(field.labelKey)}: {error ? t(error) : display(field)}
+            </AppText>;
+          })}
+          <AppButton label={t('complaint.review.edit')} variant="secondary"
+            onPress={() => router.dismissTo(section.route)} />
+        </SectionCard>
+      ))}
       <SectionCard>
         <AppText variant="subtitle">{t('attachment.title')}</AppText>
         <AttachmentList attachments={draft.attachments} />

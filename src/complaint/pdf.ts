@@ -4,7 +4,7 @@ import * as FileSystem from 'expo-file-system/legacy';
 import { getCountyName } from '@/src/complaint/counties';
 import { persistGeneratedPdf } from '@/src/complaint/documents';
 import { getCurrentTranslation, getNarrativeError, getNarrativeFields } from '@/src/complaint/freeText';
-import { resolveComplaintRoute } from '@/src/complaint/routing';
+import { isUsableEmail, resolveComplaintRoute } from '@/src/complaint/routing';
 import type { ComplaintDraft, GeneratedComplaint } from '@/src/complaint/types';
 import {
   getActiveComplaintValues,
@@ -148,6 +148,15 @@ function displayValue(
     return 'Nu știu dacă am primit o copie a contractului de muncă.';
   }
 
+  // A select option labelled in its own words (e.g. employment status "unknown")
+  // wins over the generic "Nu știu".
+  const selectedOption = field.type === 'select'
+    ? field.options?.find(({ value: candidate }) => candidate === value)
+    : undefined;
+  if (selectedOption) {
+    return dictionaryText(ro, selectedOption.labelKey);
+  }
+
   if (isUnknownValue(value)) {
     return field.type === 'county'
       ? firstTranslated(ro, ['complaint.form.unknownCounty'], 'Județ necunoscut')
@@ -267,6 +276,8 @@ export function buildComplaintHtml(args: {
   subject: string;
   emailBody: string;
   templateReady: boolean;
+  testMode: boolean;
+  intendedRecipients: string[];
 } {
   const complaint = args.complaint;
   const { category, draft, institutions, ro } = args;
@@ -321,6 +332,20 @@ export function buildComplaintHtml(args: {
     ? dictionaryText(ro, 'complaint.pdf.request')
     : (categoryTemplate ?? dictionaryText(ro, 'complaint.pdf.request'));
   const isDraftTemplate = isPlaceholder(categoryTemplate);
+  // Provisional template = test mode: only the test address receives it, and
+  // the real (territorial) destination is stated so routing can be checked.
+  const testMode = isDraftTemplate;
+  const testRecipient = institutions.testRecipient?.trim();
+  const recipients = testMode
+    ? (isUsableEmail(testRecipient) ? [testRecipient] : [])
+    : route.recipients;
+  const intendedEmails = route.recipients.length
+    ? route.recipients.join(', ')
+    : dictionaryText(ro, 'complaint.pdf.testNoEmail');
+  const testNotice = testMode
+    ? interpolate(dictionaryText(ro, 'complaint.pdf.testIntended'),
+      { destination: destinationLabel, emails: intendedEmails }, missingValue)
+    : '';
   const petitionerName = [
     activeValues.firstName?.trim(),
     activeValues.lastName?.trim(),
@@ -373,7 +398,7 @@ export function buildComplaintHtml(args: {
 </style>
 </head>
 <body>
-${isDraftTemplate ? `<p class="draft">${escapeHtml(dictionaryText(ro, 'complaint.pdf.draftBanner'))}</p>` : ''}
+${isDraftTemplate ? `<div class="draft"><p>${escapeHtml(dictionaryText(ro, 'complaint.pdf.draftBanner'))}</p><p>${escapeHtml(testNotice)}</p></div>` : ''}
 <div class="meta">
   <p><strong>${escapeHtml(dictionaryText(ro, 'complaint.pdf.to'))}:</strong> ${escapeHtml(destinationLabel)}</p>
   <p><strong>${escapeHtml(dictionaryText(ro, 'complaint.pdf.date'))}:</strong> ${escapeHtml(dateLabel)}</p>
@@ -402,13 +427,16 @@ ${originalAnnex}
 </body>
 </html>`;
 
+  const emailBody = dictionaryText(ro, 'complaint.email.body');
   return {
     html,
     destinationLabel,
-    recipients: route.recipients,
-    subject,
-    emailBody: dictionaryText(ro, 'complaint.email.body'),
+    recipients,
+    subject: testMode ? `[TEST] ${subject}` : subject,
+    emailBody: testMode ? `${testNotice}\n\n${emailBody}` : emailBody,
     templateReady: !isDraftTemplate,
+    testMode,
+    intendedRecipients: route.recipients,
   };
 }
 
@@ -442,6 +470,8 @@ export async function generateComplaintPdf(args: {
       emailSubject: rendered.subject,
       emailBody: rendered.emailBody,
       templateReady: rendered.templateReady,
+      testMode: rendered.testMode,
+      intendedRecipients: rendered.intendedRecipients,
       createdAt: createdAt.toISOString(),
     };
   } finally {
