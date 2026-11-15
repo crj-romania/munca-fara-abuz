@@ -193,7 +193,7 @@ Aplicația folosește întotdeauna conținutul împachetat ca fallback. Pentru
 actualizări fără release, setează în `.env`:
 
 ```text
-EXPO_PUBLIC_CONTENT_BASE_URL=https://crj-romania.github.io/migratie
+EXPO_PUBLIC_CONTENT_BASE_URL=https://crj-romania.github.io/munca-fara-abuz
 ```
 
 Poți copia `.env.example`. Workflow-ul

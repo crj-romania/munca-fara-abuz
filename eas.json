@@ -22,7 +22,7 @@
       },
       "env": {
         "EXPO_PUBLIC_APP_ENV": "preview",
-        "EXPO_PUBLIC_CONTENT_BASE_URL": "https://crj-romania.github.io/migratie",
+        "EXPO_PUBLIC_CONTENT_BASE_URL": "https://crj-romania.github.io/munca-fara-abuz",
         "EXPO_PUBLIC_APTABASE_APP_KEY": "<APTABASE_APP_KEY>",
         "EXPO_PUBLIC_FEEDBACK_URL": "<FEEDBACK_URL>"
       }
@@ -34,7 +34,7 @@
       },
       "env": {
         "EXPO_PUBLIC_APP_ENV": "production",
-        "EXPO_PUBLIC_CONTENT_BASE_URL": "https://crj-romania.github.io/migratie",
+        "EXPO_PUBLIC_CONTENT_BASE_URL": "https://crj-romania.github.io/munca-fara-abuz",
         "EXPO_PUBLIC_APTABASE_APP_KEY": "<APTABASE_APP_KEY>"
       }
     }

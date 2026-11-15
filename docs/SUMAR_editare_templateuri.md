@@ -101,7 +101,7 @@ Rezultatele verificărilor executate la predare:
 
 ## Continuarea pe alt calculator / remote
 
-Repo: `https://github.com/crj-romania/migratie` (inițial `vadim-chiriac/migratie`), ramura `main`. Modificările relevante sunt în acest repo, nu în vechiul worktree separat al taskului.
+Repo: `https://github.com/crj-romania/munca-fara-abuz` (inițial `vadim-chiriac/migratie`), ramura `main`. Modificările relevante sunt în acest repo, nu în vechiul worktree separat al taskului.
 
 După clonare sau actualizare în directorul proiectului:
 
