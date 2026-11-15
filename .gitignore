@@ -18,3 +18,8 @@ expo-env.d.ts
 
 # Source documents kept next to the project (e.g. the CRJ brochure), not in git
 /*.pdf
+
+# Signing credentials: never in the (public) repository
+credentials.json
+*.jks
+*.keystore
