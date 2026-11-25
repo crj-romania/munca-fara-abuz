@@ -471,8 +471,11 @@ const otherCategory = actualComplaint.categories.find((item) => item.id === 'oth
 assert.equal(contentHelpers.isPhase3CategoryAvailable(otherCategory), true);
 const otherDraft = { ...actualDraft, textLanguage: 'ro', categoryId: 'other', selectedViolationIds: [],
   values: { ...actualDraft.values, freeText: 'Altă problemă.' } };
+// Without a configured test address (the bundled value may hold a real one),
+// "other" must not guess an authority or email the foundation.
 const otherResult = pdf.buildComplaintHtml({ complaint: actualComplaint, category: otherCategory, draft: otherDraft,
-  institutions: validatedBundle.documents[bundledIndex.files.institutions], ro: actualRo });
+  institutions: { ...validatedBundle.documents[bundledIndex.files.institutions], testRecipient: '<TEST_EMAIL_PLACEHOLDER>' },
+  ro: actualRo });
 assertSameData(otherResult.recipients, []); // Do not guess an authority or email the foundation.
 assert.equal(otherResult.templateReady, false);
 assert.equal(otherResult.testMode, true);

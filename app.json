@@ -6,7 +6,6 @@
     "orientation": "portrait",
     "userInterfaceStyle": "light",
     "scheme": "muncafaraabuz",
-    "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "ro.crj.muncafaraabuz"
@@ -34,10 +33,15 @@
         "expo-build-properties",
         {
           "android": {
-            "buildArchs": ["arm64-v8a", "armeabi-v7a"]
+            "buildArchs": [
+              "arm64-v8a",
+              "armeabi-v7a"
+            ]
           }
         }
-      ]
+      ],
+      "expo-sharing",
+      "expo-splash-screen"
     ],
     "experiments": {
       "typedRoutes": true
@@ -48,6 +52,6 @@
         "projectId": "0400f74d-46fe-4c7e-bdc5-fc08d9598229"
       }
     },
-    "owner": "midoc"
+    "owner": "crj-romania"
   }
 }
